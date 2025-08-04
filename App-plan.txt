@@ -414,3 +414,21 @@ and faster.
 
                                                      Page 5
 
+
+---
+
+🔮 Planned/Advanced Features for Future Reference
+
+1. **Semantic Bookmark Chat**
+   - Users can chat with their bookmarks using natural language.
+   - The app uses embeddings + LLMs to interpret, search, summarize, and combine results, making the experience interactive and powerful.
+
+2. **Knowledge Graph Visualization**
+   - Visual network of bookmarks showing relationships by topic, tag, author, or extracted concepts.
+   - Users can explore clusters, discover connections, and click nodes to see related bookmarks.
+
+3. **Collaborative Bookmarks (MVP)**
+   - Users can share folders/collections with others.
+   - All added users have full permissions (view, add, edit, delete) to shared content.
+   - No granular permissions, notifications, or activity feed in the initial version.
+   - Simple, real-time collaboration for group research, study, or work.

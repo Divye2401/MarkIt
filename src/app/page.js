@@ -1,7 +1,9 @@
+import LoginPage from "./login";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <h1 className="text-3xl font-bold">Hello, Markit!</h1>
-    </main>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
+      <LoginPage />
+    </div>
   );
 }
