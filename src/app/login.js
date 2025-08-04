@@ -15,6 +15,9 @@ export default function LoginPage() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
+        options: {
+          redirectTo: `${process.env.NEXT_PUBLIC_URL}/bookmark`,
+        },
       });
       if (error) setError(error.message);
     } catch (err) {

@@ -1,7 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import QueryProvider from "../utils/QueryProvider";
+import QueryProvider from "../utils/Providers/QueryProvider"; //providdes query object to all components
+import AuthProvider from "../utils/Providers/AuthProvider"; //provides auth listener to all components
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,10 +23,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${poppins.variable} ${geistMono.variable}  ${geistSans.variable} antialiased`}
+        className={`${poppins.variable} ${geistMono.variable} ${geistSans.variable} antialiased`}
       >
-        <QueryProvider>{children}</QueryProvider>{" "}
-        {/* This wraps the app with React Query context */}
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
