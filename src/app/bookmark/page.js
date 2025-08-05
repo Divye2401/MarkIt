@@ -21,6 +21,28 @@ export default function BookmarkPage() {
     await handleAddBookmark(url, mediaUrl);
   };
 
+  // TEMP: Use static bookmarks for hover bug test
+  const testBookmarks = [
+    {
+      id: "1",
+      url: "https://a.com",
+      title: "A",
+      summary: "Summary A",
+      tags: ["tag1"],
+      reading_time: 1,
+      duration: 1,
+    },
+    {
+      id: "2",
+      url: "https://b.com",
+      title: "B",
+      summary: "Summary B",
+      tags: ["tag2"],
+      reading_time: 2,
+      duration: 2,
+    },
+  ];
+
   const {
     data: bookmarks = [],
     isLoading: bookmarksLoading,
@@ -61,7 +83,7 @@ export default function BookmarkPage() {
       {bookmarksLoading ? (
         <div>Loading...</div>
       ) : (
-        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start">
           {bookmarks.map((b) => (
             <BookmarkCard key={b.id} bookmark={b} />
           ))}
