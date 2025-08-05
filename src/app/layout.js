@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "../utils/Providers/QueryProvider"; //providdes query object to all components
 import AuthProvider from "../utils/Providers/AuthProvider"; //provides auth listener to all components
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
         <QueryProvider>
           <AuthProvider>{children}</AuthProvider>
         </QueryProvider>
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );

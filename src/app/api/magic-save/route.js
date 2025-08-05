@@ -1,20 +1,23 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { requireAuth } from "../../../utils/Backend/authMiddleware";
 import {
   fetchPageContent,
   extractPageData,
   refineMainContent,
-  enrichWithAI,
   detectContentType,
-  transcribeWithAssemblyAI,
   extractMediaDuration,
+  transcribeWithAssemblyAI,
+  enrichWithAI,
+  fetchEmbedding,
 } from "../../../utils/Backend/magicSaveHelpers";
-import { requireAuth } from "../../../utils/Backend/authMiddleware";
-import { createClient } from "@supabase/supabase-js";
+
+// Helper: fetch embedding from OpenAI
 
 export async function POST(request) {
   try {
     // Use auth middleware
-    const { user, errorResponse } = await requireAuth(request);
+    const { user, supabase, errorResponse } = await requireAuth(request);
     if (errorResponse) return errorResponse;
 
     const { url, mediaUrl } = await request.json();
@@ -66,24 +69,13 @@ export async function POST(request) {
       aiResult.readingTime = duration;
     }
 
-    // 8. (DB save will be next steps)
-    const { readingTime, summary, tags, contentType: aiContentType } = aiResult;
+    // 8. Generate embedding for the bookmark
+    const embedding = await fetchEmbedding(contentForAI);
 
-    // Set the user's JWT for RLS at client creation
-    const token = request.headers.get("authorization")?.split(" ")[1];
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      }
-    );
+    // 9. Set the user's JWT for RLS at client creation
+    // const supabase = supabase; // This line is removed
 
-    // 9. Insert into Supabase
+    // 10. Insert into Supabase
     const { data: inserted, error: insertError } = await supabase
       .from("bookmarks")
       .insert([
@@ -92,15 +84,16 @@ export async function POST(request) {
           url,
           title,
           description,
-          summary,
-          tags,
-          content_type: aiContentType,
-          reading_time: readingTime,
-          duration,
+          summary: aiResult.summary,
+          tags: aiResult.tags,
+          content_type: aiResult.contentType,
+          reading_time: aiResult.readingTime,
           shared_with: [],
+          embedding,
         },
       ])
       .select();
+
     if (insertError) {
       return NextResponse.json(
         { success: false, error: insertError.message },
@@ -108,10 +101,104 @@ export async function POST(request) {
       );
     }
 
+    console.log("Inserted bookmark:", inserted);
     return NextResponse.json({
       success: true,
       bookmark: inserted?.[0] || null,
     });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request) {
+  try {
+    // Use auth middleware
+    const { user, supabase, errorResponse } = await requireAuth(request);
+    if (errorResponse) return errorResponse;
+
+    // const supabase = supabase; // This line is removed
+
+    const {
+      id,
+      title,
+      description,
+      reading_time,
+      url,
+      tags,
+      is_favorite,
+      thumbnail_url,
+    } = await request.json();
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Missing bookmark id" },
+        { status: 400 }
+      );
+    }
+
+    const { data: updated, error } = await supabase
+      .from("bookmarks")
+      .update({
+        title,
+        description,
+        reading_time,
+        url,
+        tags,
+        is_favorite,
+        thumbnail_url,
+      })
+      .eq("id", id)
+      .eq("user_id", user.id)
+      .select();
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true, bookmark: updated?.[0] || null });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request) {
+  try {
+    const { user, supabase, errorResponse } = await requireAuth(request);
+    if (errorResponse) return errorResponse;
+
+    // const supabase = supabase; // This line is removed
+
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: "Missing bookmark id" },
+        { status: 400 }
+      );
+    }
+
+    const { error } = await supabase
+      .from("bookmarks")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", user.id);
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json(
       { success: false, error: error.message },

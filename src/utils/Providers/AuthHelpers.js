@@ -3,15 +3,19 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../supabaseClient";
 
-// 1️⃣ Fetch user session
-export const fetchUser = async () => {
+export async function fetchUser() {
   const {
     data: { user },
-    error,
   } = await supabase.auth.getUser();
-  if (error) throw new Error(error.message);
   return user;
-};
+}
+
+export async function getAccessToken() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return session?.access_token;
+}
 
 export function useUser() {
   // Store user session in cache

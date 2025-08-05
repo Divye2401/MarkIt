@@ -1,10 +1,17 @@
 "use client";
 import Image from "next/image";
+import BookmarkWelcome from "./BookmarkWelcome";
 
-export default function BookmarkNavbar({ user, onLogout }) {
+export default function BookmarkNavbar({ user, bookmarks, onLogout }) {
   return (
-    <nav className="flex items-center justify-between bg-white px-6 py-4 shadow-sm">
+    <nav className="flex items-center justify-between bg-white px-12 py-6 shadow-sm relative">
+      {/* Left: Logo */}
       <div className="text-lg font-semibold">📑 Markit</div>
+      {/* Center: Welcome message with extra padding */}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-8">
+        <BookmarkWelcome user={user} bookmarks={bookmarks} />
+      </div>
+      {/* Right: User info and logout */}
       <div className="flex items-center gap-4">
         <span className="text-gray-700 font-medium hidden sm:block">
           {user.user_metadata?.full_name}

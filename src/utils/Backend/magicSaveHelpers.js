@@ -180,3 +180,121 @@ export function extractMediaDuration(html) {
     "";
   return ogDuration ? Math.ceil(Number(ogDuration) / 60) : null;
 }
+// -----------------------------------------------------------------------------------
+
+export async function fetchEmbedding(text) {
+  const apiKey = process.env.OPENAI_API_KEY;
+  const response = await fetch("https://api.openai.com/v1/embeddings", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      input: text,
+      model: "text-embedding-ada-002",
+    }),
+  });
+  const data = await response.json();
+  return data.data[0].embedding;
+}
+
+// Helper: Generate a natural language answer from OpenAI based on search results
+export async function summarizeSearchResultsWithAI(
+  query,
+  bookmarks,
+  suggestedLinks
+) {
+  if (!bookmarks || bookmarks.length === 0)
+    return "No relevant bookmarks found.";
+  const context = bookmarks
+    .map((b, i) => `${i + 1}. Title: ${b.title}\nURL: ${b.url}`)
+    .join("\n\n");
+
+  const prompt = `
+You are a helpful assistant. Given the following user query and a list of bookmarks, first explain how each of the user's bookmarks relate to the query (be specific, reference the title and link). Then, in a separate section, you are given 2 additional relevant articles (with title, url, and description) that were found via Google and are live and recent. For each of these, generate a description as to how it relates to the query, within the JSON below. Do NOT invent or add any links of your own—only describe the ones provided in the suggestedLinks array. Within description just give the description content, nothing else.
+
+Please answer ONLY in the following JSON format:
+
+{
+  "ourLinks": [
+    { "url": "...", "description": "..." },
+    ... (all of the user's bookmarks)
+  ],
+  "suggestedLinks": [
+    { "title": "...", "url": "...", "description": "..." },
+    ... (the provided Google links only)
+  ]
+}
+
+Do not include any extra commentary outside the JSON.
+
+User query: ${query}
+
+Bookmarks:
+${context}
+
+SuggestedLinks:
+${JSON.stringify(suggestedLinks, null, 2)}
+`;
+
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant for searching bookmarks.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.4,
+      max_tokens: 700,
+    }),
+  });
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content || "";
+}
+//----------------------------------------------
+
+// Helper: extract {url, description} pairs for our links and suggested links from AI answer (expects JSON)
+export function extractLinksWithDescriptions(aiAnswer) {
+  try {
+    const jsonStart = aiAnswer.indexOf("{");
+    const jsonEnd = aiAnswer.lastIndexOf("}");
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      const jsonString = aiAnswer.slice(jsonStart, jsonEnd + 1);
+      const parsed = JSON.parse(jsonString);
+      return {
+        ourLinks: parsed.ourLinks || [],
+        suggestedLinks: parsed.suggestedLinks || [],
+      };
+    }
+  } catch (e) {
+    // If parsing fails, return empty arrays
+  }
+  return { ourLinks: [], suggestedLinks: [] };
+}
+//---------------------------------------------------------------------------------------------------
+// Helper: Fetch top 2 live links from Google Custom Search API
+export async function fetchGoogleLinks(query) {
+  query = `$Blogs about ${query} `;
+  const apiKey = process.env.GOOGLE_API_KEY;
+  const cx = process.env.GOOGLE_CSE_ID;
+  const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(
+    query
+  )}&cx=${cx}&key=${apiKey}&num=2`;
+  const res = await fetch(url);
+  const data = await res.json();
+  console.log("Google Data:", data);
+  if (!data.items) return [];
+  return data.items.map((item) => ({
+    title: item.title,
+    url: item.link,
+  }));
+}
