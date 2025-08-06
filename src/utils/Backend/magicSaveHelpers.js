@@ -56,12 +56,13 @@ export async function enrichWithAI({
 
   const prompt = `
 Given the following web page content, title, and description, do the following:
-- Write a concise summary (2-3 sentences)
+- Write a concise summary (2-3 sentences) as 'summary'.
+- Write a detailed, comprehensive summary as 'biggerSummary' (minimum 2 paragraphs, between 130 and 150 words, covering all main points and details)..
 - Suggest 3-5 topic tags (as a JSON array)
 - Estimate reading time in minutes (integer)
 - Guess the content type (blog, video, documentation, etc)
 
-Return your answer as a JSON object with keys: summary, tags, readingTime, contentType.
+Return your answer as a JSON object with keys: summary, biggerSummary, tags, readingTime, contentType.
 
 Title: ${title}
 Description: ${description}
@@ -74,6 +75,7 @@ ContentType: ${contentType}
     tags: [],
     readingTime: 0,
     contentType: "unknown",
+    biggerSummary: "",
   };
 
   let lastError = null;
@@ -97,7 +99,7 @@ ContentType: ${contentType}
               { role: "user", content: prompt },
             ],
             temperature: 0.4,
-            max_tokens: 512,
+            max_tokens: 1024,
           }),
         }
       );
@@ -291,7 +293,6 @@ export async function fetchGoogleLinks(query) {
   )}&cx=${cx}&key=${apiKey}&num=2`;
   const res = await fetch(url);
   const data = await res.json();
-  console.log("Google Data:", data);
   if (!data.items) return [];
   return data.items.map((item) => ({
     title: item.title,

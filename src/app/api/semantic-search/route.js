@@ -42,7 +42,7 @@ export async function POST(request) {
     const { data: bookmarks, error } = await supabase
       .from("bookmarks")
       .select("*")
-      .eq("user_id", user.id)
+      .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
       .not("embedding", "is", null);
     if (error)
       return NextResponse.json(

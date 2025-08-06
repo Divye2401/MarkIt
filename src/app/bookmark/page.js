@@ -24,6 +24,7 @@ import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { Search } from "lucide-react";
 import { toast } from "sonner";
+import { searchBookmarks } from "../../utils/Frontend/BookmarkHelpers";
 
 // --- Main Page Component ---
 export default function BookmarkPage() {
@@ -210,7 +211,7 @@ export default function BookmarkPage() {
               <BookmarkCard
                 key={b.id}
                 bookmark={b}
-                onBookmarkUpdate={() => {
+                refresh={() => {
                   queryClient.invalidateQueries(["bookmarks"]);
                   refetch();
                 }}

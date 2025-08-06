@@ -83,9 +83,9 @@ export async function POST(request) {
           user_id: userId,
           url,
           title,
-          description,
           summary: aiResult.summary,
           tags: aiResult.tags,
+          bigger_summary: aiResult.biggerSummary,
           content_type: aiResult.contentType,
           reading_time: aiResult.readingTime,
           shared_with: [],
@@ -125,13 +125,16 @@ export async function PATCH(request) {
     const {
       id,
       title,
-      description,
+      summary,
       reading_time,
       url,
       tags,
       is_favorite,
       thumbnail_url,
+      bigger_summary,
+      notes,
     } = await request.json();
+
     if (!id) {
       return NextResponse.json(
         { success: false, error: "Missing bookmark id" },
@@ -143,15 +146,17 @@ export async function PATCH(request) {
       .from("bookmarks")
       .update({
         title,
-        description,
+        summary,
         reading_time,
         url,
         tags,
         is_favorite,
         thumbnail_url,
+        notes,
+        bigger_summary,
       })
       .eq("id", id)
-      .eq("user_id", user.id)
+      .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
       .select();
 
     if (error) {
@@ -189,7 +194,7 @@ export async function DELETE(request) {
       .from("bookmarks")
       .delete()
       .eq("id", id)
-      .eq("user_id", user.id);
+      .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`);
 
     if (error) {
       return NextResponse.json(

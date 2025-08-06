@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { useState, useRef, useEffect } from "react";
-import { Pencil, Trash2, Star, StarOff } from "lucide-react";
+import { Pencil, Trash2, Star, StarOff, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -13,6 +13,7 @@ import {
 } from "../../utils/Frontend/BookmarkHelpers";
 import { fetchUser } from "../../utils/Providers/AuthHelpers";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // BookmarkCard displays a single bookmark with interactive features (edit, delete, favorite, thumbnail upload)
 
@@ -35,6 +36,8 @@ export default function BookmarkCard({ bookmark, refresh }) {
   const [editImageUploading, setEditImageUploading] = useState(false); // Upload state
   const [deleteOpen, setDeleteOpen] = useState(false); // Delete modal open/close
   const [isFavorite, setIsFavorite] = useState(bookmark.is_favorite); // Favorite toggle
+
+  const router = useRouter();
 
   // --- Modal height calculation for smooth animation ---
   useEffect(() => {
@@ -112,17 +115,12 @@ export default function BookmarkCard({ bookmark, refresh }) {
         id: bookmark.id,
         is_favorite: !isFavorite,
       });
-      if (updated.success) {
-        setIsFavorite(updated.bookmark?.is_favorite ?? !isFavorite);
-        toast.success(
-          updated.bookmark?.is_favorite
-            ? "Added to favorites!"
-            : "Removed from favorites!"
-        );
-        refresh();
-      } else {
-        toast.error(updated.error || "Failed to update favorite status.");
-      }
+      const newFavorite = updated.bookmark?.is_favorite ?? !isFavorite;
+      setIsFavorite(newFavorite);
+      toast.success(
+        newFavorite ? "Added to favorites!" : "Removed from favorites!"
+      );
+      refresh();
     } catch (err) {
       toast.error("Failed to update favorite status.");
     }
@@ -134,10 +132,12 @@ export default function BookmarkCard({ bookmark, refresh }) {
       className="relative min-h-[120px] border overflow-hidden"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => router.push(`/bookmark/${bookmark.id}`)}
       style={{
         minHeight: hovered ? headerHeight + modalHeight : headerHeight,
         background: hovered ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)",
         transition: "all 0.3s",
+        cursor: "pointer",
       }}
     >
       {/* Header: avatar, title, and action buttons */}
@@ -160,11 +160,33 @@ export default function BookmarkCard({ bookmark, refresh }) {
           {/* Title (truncated if too long) */}
           <CardTitle
             asChild
-            className="truncate text-blue-700 pb-1 flex-1 min-w-0"
+            className="truncate text-blue-700 pb-1 flex-1 min-w-0 flex items-center gap-2"
           >
-            <a href={bookmark.url} target="_blank" rel="noopener noreferrer">
+            <div className="flex items-center gap-2">
               {bookmark.title || bookmark.url}
-            </a>
+              {bookmark.shared_with.length > 0 && (
+                <button
+                  type="button"
+                  title="Shared with others"
+                  className="ml-1 inline-flex items-center  text-blue-400 hover:text-blue-600 focus:outline-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast.info(
+                      bookmark.shared_with.length === 1
+                        ? `Shared with 1 user: ${bookmark.shared_with.join(
+                            ", "
+                          )}`
+                        : `Shared with ${
+                            bookmark.shared_with.length
+                          } users: ${bookmark.shared_with.join(", ")}`
+                    );
+                  }}
+                  tabIndex={0}
+                >
+                  <Users size={16} />
+                </button>
+              )}
+            </div>
           </CardTitle>
         </div>
         {/* Action buttons: favorite, edit, delete */}
@@ -173,7 +195,10 @@ export default function BookmarkCard({ bookmark, refresh }) {
             className={`p-2 rounded transition ml-2 ${
               isFavorite ? "bg-yellow-100" : "hover:bg-gray-100"
             }`}
-            onClick={handleToggleFavorite}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleToggleFavorite();
+            }}
             aria-label={isFavorite ? "Unfavorite" : "Favorite"}
             type="button"
           >
@@ -185,7 +210,10 @@ export default function BookmarkCard({ bookmark, refresh }) {
           </button>
           <button
             className="p-2 rounded hover:bg-gray-100 transition ml-2"
-            onClick={() => setEditOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setEditOpen(true);
+            }}
             aria-label="Edit Bookmark"
             style={{ flexShrink: 0 }}
           >
@@ -193,7 +221,10 @@ export default function BookmarkCard({ bookmark, refresh }) {
           </button>
           <button
             className="p-2 rounded hover:bg-red-100 transition ml-1"
-            onClick={() => setDeleteOpen(true)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeleteOpen(true);
+            }}
             aria-label="Delete Bookmark"
             style={{ flexShrink: 0 }}
           >
@@ -241,7 +272,14 @@ export default function BookmarkCard({ bookmark, refresh }) {
             <DialogHeader>
               <DialogTitle>Edit Bookmark</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleEditBookmark} className="flex flex-col gap-4">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleEditBookmark(e);
+              }}
+              className="flex flex-col gap-4"
+            >
               <Input
                 name="title"
                 value={editTitle}
@@ -294,11 +332,18 @@ export default function BookmarkCard({ bookmark, refresh }) {
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => setEditOpen(false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditOpen(false);
+                  }}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={editImageUploading}>
+                <Button
+                  type="submit"
+                  disabled={editImageUploading}
+                  onClick={(e) => e.stopPropagation()} // <-- Add this!
+                >
                   Save
                 </Button>
               </div>
@@ -319,14 +364,20 @@ export default function BookmarkCard({ bookmark, refresh }) {
               <Button
                 type="button"
                 variant="secondary"
-                onClick={() => setDeleteOpen(false)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDeleteOpen(false);
+                }}
               >
                 Cancel
               </Button>
               <Button
                 type="button"
                 variant="destructive"
-                onClick={handleDeleteBookmark}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteBookmark();
+                }}
               >
                 Delete
               </Button>

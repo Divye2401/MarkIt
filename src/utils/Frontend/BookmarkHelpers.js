@@ -22,7 +22,7 @@ export async function fetchBookmarks() {
   const { data, error } = await supabase
     .from("bookmarks")
     .select("*")
-    .eq("user_id", user.id)
+    .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return data;
@@ -30,7 +30,7 @@ export async function fetchBookmarks() {
 
 export async function searchBookmarks(query) {
   const accessToken = await getAccessToken();
-  const res = await fetch("/api/search-bookmarks", {
+  const res = await fetch("/api/semantic-search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -42,15 +42,30 @@ export async function searchBookmarks(query) {
   return data;
 }
 
+export async function fetchBookmarkById(id) {
+  const user = await fetchUser();
+  if (!user) throw new Error("Not authenticated");
+  const { data, error } = await supabase
+    .from("bookmarks")
+    .select("*")
+    .eq("id", id)
+    .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export const updateBookmark = async ({
   id,
   title,
-  description,
+  summary,
   reading_time,
   url,
   tags,
   is_favorite,
   thumbnail_url,
+  bigger_summary,
+  notes,
 }) => {
   const accessToken = await getAccessToken();
   const res = await fetch("/api/magic-save", {
@@ -62,12 +77,14 @@ export const updateBookmark = async ({
     body: JSON.stringify({
       id,
       title,
-      description,
+      summary,
       reading_time,
       url,
       tags,
       is_favorite,
       thumbnail_url,
+      notes,
+      bigger_summary,
     }),
   });
   const data = await res.json();
