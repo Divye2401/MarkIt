@@ -38,7 +38,7 @@ export async function POST(request) {
     }
     if (found && userId) {
       // Send email
-      await sendEmailToUser(email, bookmarkId);
+      await sendEmailToUser(email, bookmarkId, "bookmark");
       // Fetch the bookmark
       const fetchRes = await supabaseAdmin
         .from("bookmarks")

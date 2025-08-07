@@ -20,7 +20,7 @@ export default function AddUserModal({ open, onClose, id }) {
     e.preventDefault();
 
     // Call your API route
-    const res = await fetch("/api/addshareduser", {
+    const res = await fetch("/api/addusertofolder", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, id }),
@@ -28,9 +28,9 @@ export default function AddUserModal({ open, onClose, id }) {
     const data = await res.json();
 
     if (data.exists) {
-      toast.success(`User exists! Added to bookmark!`);
+      toast.success(`User exists! Added to folder!`);
     } else {
-      toast.error("Error adding user to bookmark!");
+      toast.error("Error adding user to folder!");
     }
     setEmail("");
     setTouched(false);

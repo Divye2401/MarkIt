@@ -100,7 +100,11 @@ export async function deleteFolder(folderId) {
   return { success: true };
 }
 
-export async function removeBookmarkFromFolder(folderId, bookmarkId) {
+export async function removeBookmarkFromFolder(
+  folderId,
+  bookmarkId,
+  reading_time
+) {
   // Fetch current bookmark_ids
   const { data: folder, error: fetchError } = await supabase
     .from("folders")
@@ -113,14 +117,18 @@ export async function removeBookmarkFromFolder(folderId, bookmarkId) {
     return { success: true, alreadyRemoved: true };
   }
 
-  const { data, error } = await supabase
-    .from("bookmarks")
-    .select("reading_time")
-    .eq("id", bookmarkId)
-    .single();
+  if (!reading_time) {
+    const { data, error } = await supabase
+      .from("bookmarks")
+      .select("reading_time")
+      .eq("id", bookmarkId)
+      .single();
+  }
 
   const doc_count = (folder.doc_count || 0) - 1;
-  const total_time = (folder.total_time || 0) - (data.reading_time || 0);
+  const total_time = reading_time
+    ? (folder.total_time || 0) - reading_time
+    : (folder.total_time || 0) - (data.reading_time || 0);
 
   const newIds = currentIds.filter((id) => id !== bookmarkId);
   const { error: updateError } = await supabase

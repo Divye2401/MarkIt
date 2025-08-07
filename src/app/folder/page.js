@@ -3,15 +3,21 @@ import { useState } from "react";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Plus } from "lucide-react";
-
-const dummyFolders = [
-  { id: 1, name: "Work", count: 5 },
-  { id: 2, name: "Personal", count: 2 },
-  { id: 3, name: "Reading List", count: 8 },
-];
+import { useQuery } from "@tanstack/react-query";
+import { fetchFolders } from "../../utils/Frontend/FolderHelpers";
+import { useRouter } from "next/navigation";
 
 export default function FolderPage() {
-  const [folders] = useState(dummyFolders);
+  const router = useRouter();
+  const {
+    data: folders = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["folders-page"],
+    queryFn: fetchFolders,
+  });
   const [showInput, setShowInput] = useState(false);
   const [newFolder, setNewFolder] = useState("");
 
@@ -35,15 +41,22 @@ export default function FolderPage() {
           <Button disabled>Save</Button>
         </div>
       )}
+      {isLoading && <div className="text-gray-500">Loading folders...</div>}
+      {isError && (
+        <div className="text-red-500">
+          {error?.message || "Failed to load folders."}
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {folders.map((folder) => (
           <div
             key={folder.id}
-            className="p-4 bg-white rounded shadow flex items-center justify-between"
+            className="p-4 bg-white rounded shadow flex items-center justify-between cursor-pointer hover:bg-blue-50 transition"
+            onClick={() => router.push(`/folder/${folder.id}`)}
           >
             <span className="font-medium">{folder.name}</span>
             <span className="text-xs text-gray-500">
-              {folder.count} bookmarks
+              {folder.doc_count ?? 0} bookmarks
             </span>
           </div>
         ))}

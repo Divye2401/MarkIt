@@ -1,5 +1,9 @@
 import { supabase } from "../supabaseClient";
 import { fetchUser, getAccessToken } from "../Providers/AuthHelpers";
+import {
+  fetchFoldersByBookmarkId,
+  removeBookmarkFromFolder,
+} from "./FolderHelpers";
 
 export const handleAddBookmark = async (url, mediaUrl = "") => {
   const accessToken = await getAccessToken();
@@ -93,6 +97,17 @@ export const updateBookmark = async ({
 
 export const deleteBookmark = async (id) => {
   const accessToken = await getAccessToken();
+
+  //Get reading time
+  const {
+    data: { reading_time },
+    error: fetchError,
+  } = await supabase
+    .from("bookmarks")
+    .select("reading_time")
+    .eq("id", id)
+    .single();
+
   const res = await fetch("/api/magic-save", {
     method: "DELETE",
     headers: {
@@ -102,6 +117,24 @@ export const deleteBookmark = async (id) => {
     body: JSON.stringify({ id }),
   });
   const data = await res.json();
+  if (!data.success) {
+    // If delete failed, don't try to clean up folders
+    return data;
+  }
+  // Now remove from all folders
+  console.log("Removing bookmark from folders--------------------");
+  try {
+    const folders = await fetchFoldersByBookmarkId(id);
+    console.log("folders------------------", folders);
+    if (folders && folders.length > 0) {
+      for (let i = 0; i < folders.length; i++) {
+        await removeBookmarkFromFolder(folders[i].id, id, reading_time);
+      }
+    }
+  } catch (err) {
+    // Optionally log or handle error
+    console.error("Error removing bookmark from folders:", err);
+  }
   return data;
 };
 
@@ -120,3 +153,13 @@ export const uploadBookmarkImage = async (file, userId) => {
     .getPublicUrl(filePath);
   return publicUrlData.publicUrl;
 };
+
+export async function fetchBookmarksByIds(bookmarkIds) {
+  if (!bookmarkIds || bookmarkIds.length === 0) return [];
+  const { data, error } = await supabase
+    .from("bookmarks")
+    .select("*")
+    .in("id", bookmarkIds);
+  if (error) throw new Error(error.message);
+  return data;
+}
