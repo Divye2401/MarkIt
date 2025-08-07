@@ -10,6 +10,7 @@ import {
   fetchBookmarks,
   handleAddBookmark,
 } from "../../utils/Frontend/BookmarkHelpers";
+import { fetchFolderById } from "../../utils/Frontend/FolderHelpers";
 
 // --- UI Components ---
 import Sidebar from "../../components/Bookmark/Sidebar";
@@ -40,10 +41,7 @@ export default function BookmarkPage() {
   const [searchResults, setSearchResults] = useState(null);
   const [addingId, setAddingId] = useState(null);
   const [selectedTags, setSelectedTags] = useState([]);
-  const [folders, setFolders] = useState([
-    { id: "1", name: "Work", count: 5 },
-    { id: "2", name: "Personal", count: 2 },
-  ]); // TODO: Replace with real fetch
+  // TODO: Replace with real fetch
   const [selectedFolderId, setSelectedFolderId] = useState(null);
 
   // --- Data Fetching ---
@@ -54,6 +52,14 @@ export default function BookmarkPage() {
   } = useQuery({
     queryKey: ["bookmarks"],
     queryFn: fetchBookmarks,
+  });
+
+  // --- Folder details for filtering ---
+  const { data: selectedFolder, isLoading: folderLoading } = useQuery({
+    queryKey: ["folder", selectedFolderId],
+    queryFn: () =>
+      selectedFolderId ? fetchFolderById(selectedFolderId) : null,
+    enabled: !!selectedFolderId,
   });
 
   // --- Bookmark Add Handler ---
@@ -101,9 +107,12 @@ export default function BookmarkPage() {
         )
       : bookmarks;
 
-  const folderFilteredBookmarks = selectedFolderId
-    ? filteredBookmarks.filter((b) => b.folder_id === selectedFolderId)
-    : filteredBookmarks;
+  const folderFilteredBookmarks =
+    selectedFolderId && selectedFolder && selectedFolder.bookmark_ids
+      ? filteredBookmarks.filter((b) =>
+          selectedFolder.bookmark_ids.includes(b.id)
+        )
+      : filteredBookmarks;
 
   // --- Sorting ---
   const sortedBookmarks = [...folderFilteredBookmarks].sort((a, b) => {
@@ -139,13 +148,11 @@ export default function BookmarkPage() {
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
       <Sidebar
-        folders={folders}
         selectedFolderId={selectedFolderId}
         onSelectFolder={setSelectedFolderId}
-        onCreateFolder={handleCreateFolder}
       />
       {/* Main content */}
-      <div className="flex-1">
+      <div className="flex-1 relative">
         <BookmarkNavbar user={user} bookmarks={bookmarks} onLogout={onLogout} />
         {bookmarks.length > 0 && (
           <div className="w-full px-4 mt-8 mb-6">
@@ -202,6 +209,7 @@ export default function BookmarkPage() {
           onClose={() => setShowInput(false)}
           onAdd={AddBookmark}
         />
+
         {/* Bookmarks Grid */}
         {bookmarksLoading ? (
           <div>Loading...</div>

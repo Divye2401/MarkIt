@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { useState, useRef, useEffect } from "react";
-import { Pencil, Trash2, Star, StarOff, Users } from "lucide-react";
+import { Pencil, Trash2, Star, StarOff, Users, Folder } from "lucide-react";
+import Bookmark_Folder from "./Bookmark_Folder";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
@@ -36,6 +37,9 @@ export default function BookmarkCard({ bookmark, refresh }) {
   const [editImageUploading, setEditImageUploading] = useState(false); // Upload state
   const [deleteOpen, setDeleteOpen] = useState(false); // Delete modal open/close
   const [isFavorite, setIsFavorite] = useState(bookmark.is_favorite); // Favorite toggle
+
+  const [showFolderModal, setShowFolderModal] = useState(false);
+  const suppressCardClick = useRef(false);
 
   const router = useRouter();
 
@@ -132,7 +136,16 @@ export default function BookmarkCard({ bookmark, refresh }) {
       className="relative min-h-[120px] border overflow-hidden"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => router.push(`/bookmark/${bookmark.id}`)}
+      onClick={() => {
+        if (suppressCardClick.current) {
+          suppressCardClick.current = false; // reset after one block
+          return;
+        }
+
+        if (!editOpen && !deleteOpen && !showFolderModal) {
+          router.push(`/bookmark/${bookmark.id}`);
+        }
+      }}
       style={{
         minHeight: hovered ? headerHeight + modalHeight : headerHeight,
         background: hovered ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)",
@@ -229,6 +242,17 @@ export default function BookmarkCard({ bookmark, refresh }) {
             style={{ flexShrink: 0 }}
           >
             <Trash2 size={18} />
+          </button>
+          <button
+            className="p-2 rounded hover:bg-gray-100 transition ml-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowFolderModal(true);
+            }}
+            aria-label="Manage Folders"
+            type="button"
+          >
+            <Folder size={18} />
           </button>
         </div>
       </CardHeader>
@@ -385,6 +409,21 @@ export default function BookmarkCard({ bookmark, refresh }) {
           </DialogContent>
         </Dialog>
       )}
+      {/* Folder Modal */}
+      <Bookmark_Folder
+        open={showFolderModal}
+        onClose={() => {
+          suppressCardClick.current = true;
+          setShowFolderModal(false);
+        }}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            suppressCardClick.current = true; // prevent push on outside close
+          }
+          setShowFolderModal(isOpen);
+        }}
+        bookmarkId={bookmark.id}
+      />
     </Card>
   );
 }
