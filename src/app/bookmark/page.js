@@ -23,7 +23,7 @@ import TagFilter from "../../components/Bookmark/TagFilter";
 import SearchResultsDialog from "../../components/Bookmark/SearchResultsDialog";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
-import { Search } from "lucide-react";
+import { Search, ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { searchBookmarks } from "../../utils/Frontend/BookmarkHelpers";
 
@@ -156,22 +156,32 @@ export default function BookmarkPage() {
         <BookmarkNavbar user={user} bookmarks={bookmarks} onLogout={onLogout} />
         {bookmarks.length > 0 && (
           <div className="w-full px-4 mt-8 mb-6">
-            <div className="flex flex-col md:flex-row items-center gap-4 w-full">
-              {/* Tag Filter on the left */}
-              <div className="w-full md:w-1/3">
+            <div className="flex flex-col md:flex-row items-end gap-4 w-full">
+              {/* Tag Filter and Arrow Button on the left */}
+              <div className="w-full md:w-1/3 flex items-end gap-2">
+                <button
+                  className="bg-black text-white rounded-full w-16 h-10 flex items-center justify-center hover:bg-gray-900 transition"
+                  aria-label="Front"
+                  type="button"
+                  onClick={() => {
+                    router.push("/folder");
+                  }}
+                >
+                  <ArrowRight size={24} />
+                </button>
                 <TagFilter
                   bookmarks={bookmarks}
                   selectedTags={selectedTags}
                   onTagSelect={setSelectedTags}
                 />
               </div>
-              {/* Search Bar and Button on the right */}
-              <div className="flex flex-row items-center gap-4 w-full md:w-2/3 justify-end">
+              {/* Search Bar, Button, and Add Bookmark on the right */}
+              <div className="flex flex-row items-end gap-4 w-full md:w-2/3 justify-end">
                 <div className="relative w-full md:w-2/3">
                   <Input
                     type="text"
                     placeholder="Search through your documents..."
-                    className="pl-12 pr-4 py-3 w-full rounded-full bg-white/80 backdrop-blur-md \
+                    className="pl-12 pr-4 py-5 w-full rounded-full bg-white/80 backdrop-blur-md \
                              border border-gray-200 shadow-sm focus:border-blue-400 \
                              focus:ring-2 focus:ring-blue-300 transition-all duration-300\
                              placeholder:text-gray-400 hover:shadow-md"
@@ -185,11 +195,12 @@ export default function BookmarkPage() {
                 </div>
                 <Button
                   onClick={handleSearch}
-                  className="scale-100 px-8 py-4 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all font-bold text-lg ml-2"
+                  className="scale-100 px-8 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all font-bold text-lg ml-2"
                   disabled={searchValue.trim().length < 8}
                 >
                   Search
                 </Button>
+                <AddBookmarkButton onClick={() => setShowInput(true)} />
               </div>
             </div>
           </div>
@@ -203,7 +214,6 @@ export default function BookmarkPage() {
           handleAddSuggested={handleAddSuggested}
         />
         {/* Add Bookmark Button & Modal */}
-        <AddBookmarkButton onClick={() => setShowInput(true)} />
         <AddBookmarkModal
           open={showInput}
           onClose={() => setShowInput(false)}

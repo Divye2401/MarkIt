@@ -25,7 +25,7 @@ export default function TagFilter({ bookmarks, selectedTags, onTagSelect }) {
     : allTags.filter((tag) => !selectedTags.includes(tag));
 
   return (
-    <div className="w-full flex justify-center mt-2 mb-4 px-4">
+    <div className="w-full flex justify-center   px-4">
       <div className="w-full max-w-xl relative">
         <input
           type="text"
