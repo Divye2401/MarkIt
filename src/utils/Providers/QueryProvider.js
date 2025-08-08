@@ -5,7 +5,16 @@ import { useState } from "react";
 
 export default function QueryProvider({ children }) {
   // Ensure a single QueryClient instance per provider
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 3,
+          },
+        },
+      })
+  );
   return (
     <QueryClientProvider client={queryClient}>
       {children}

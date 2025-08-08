@@ -26,6 +26,7 @@ import { Button } from "../../components/ui/button";
 import { Search, ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { searchBookmarks } from "../../utils/Frontend/BookmarkHelpers";
+import BookmarkClusterMap from "./BookmarkClusterMap";
 
 // --- Main Page Component ---
 export default function BookmarkPage() {
@@ -52,6 +53,7 @@ export default function BookmarkPage() {
   } = useQuery({
     queryKey: ["bookmarks"],
     queryFn: fetchBookmarks,
+    refetchOnWindowFocus: false,
   });
 
   // --- Folder details for filtering ---
@@ -237,6 +239,8 @@ export default function BookmarkPage() {
             ))}
           </div>
         )}
+        {/* Bookmark Clusters Visualization */}
+        <BookmarkClusterMap bookmarks={bookmarks} />
       </div>
     </div>
   );

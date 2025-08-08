@@ -1,0 +1,92 @@
+import { NextResponse } from "next/server";
+import { requireAuth } from "../../../utils/Backend/authMiddleware";
+import { kmeans } from "ml-kmeans";
+import { OpenAI } from "openai";
+import {
+  createFingerprint,
+  createCacheKeyString,
+} from "@/utils/Backend/magicSaveHelpers";
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+// Simple in-memory cache
+const clusterCache = new Map();
+const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
+
+export async function POST(request) {
+  try {
+    const { user, supabase, errorResponse } = await requireAuth(request);
+    if (errorResponse) return errorResponse;
+
+    const numClusters = 3;
+    // Fetch all bookmarks for this user
+    const { data: bookmarks, error } = await supabase
+      .from("bookmarks")
+      .select("id, embedding, url, title, summary, tags")
+      .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
+      .not("embedding", "is", null);
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    if (!bookmarks || bookmarks.length === 0) {
+      return NextResponse.json({ clusters: [] });
+    }
+
+    // Create cache key based on bookmark content
+    let bookmarkFingerprint = createFingerprint(bookmarks);
+    let cacheKeyString = createCacheKeyString(bookmarkFingerprint);
+    const cacheKey = user.id + ":" + cacheKeyString;
+
+    // Check cache first
+    const cached = clusterCache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return NextResponse.json({ clusters: cached.data });
+    }
+
+    // Prepare data for clustering
+    const vectors = bookmarks.map((b) => b.embedding);
+    // Run K-means clustering
+    const result = kmeans(vectors, numClusters);
+    // Group bookmarks by cluster
+    const clusters = Array.from({ length: numClusters }, () => []);
+    result.clusters.forEach((clusterIdx, i) => {
+      clusters[clusterIdx].push(bookmarks[i].url, bookmarks[i].title);
+    });
+
+    // Generate AI label for each cluster
+    const labeledClusters = [];
+    for (const cluster of clusters) {
+      const prompt = `Given these bookmark urls and titles:\n${cluster
+        .map((b, i) => `Value:${b}`)
+        .join(
+          "\n"
+        )}\nSummarize the main topic or theme of this group in 1-3 words. Only return the topic label, nothing else.`;
+      let label = "Misc";
+      try {
+        const response = await openai.chat.completions.create({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }],
+        });
+        label = response.choices[0].message.content.trim();
+      } catch (e) {
+        label = "Misc";
+      }
+      labeledClusters.push({
+        label,
+        bookmarks: cluster.filter((_, i) => i % 2 !== 0),
+      });
+    }
+
+    // Cache the result
+    clusterCache.set(cacheKey, {
+      data: labeledClusters,
+      timestamp: Date.now(),
+    });
+
+    console.log("labeledClusters", labeledClusters);
+    return NextResponse.json({ clusters: labeledClusters });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

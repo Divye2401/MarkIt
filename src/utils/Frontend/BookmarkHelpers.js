@@ -163,3 +163,18 @@ export async function fetchBookmarksByIds(bookmarkIds) {
   if (error) throw new Error(error.message);
   return data;
 }
+
+export async function fetchBookmarkClusters() {
+  const accessToken = await getAccessToken();
+  const res = await fetch("/api/bookmark-clusters", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  if (!res.ok) throw new Error("Failed to fetch clusters");
+  const finalresult = await res.json();
+  console.log("data", finalresult);
+  return finalresult;
+}

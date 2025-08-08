@@ -299,3 +299,45 @@ export async function fetchGoogleLinks(query) {
     url: item.link,
   }));
 }
+
+export function createFingerprint(bookmarks) {
+  let bookmarkFingerprint = [];
+  for (let i = 0; i < bookmarks.length; i++) {
+    const bookmark = bookmarks[i];
+    let fingerprint = bookmark.id + "-";
+    if (bookmark.title) {
+      fingerprint = fingerprint + bookmark.title;
+    }
+    fingerprint = fingerprint + "-";
+    if (bookmark.summary) {
+      fingerprint = fingerprint + bookmark.summary;
+    }
+    fingerprint = fingerprint + "-";
+    if (bookmark.url) {
+      fingerprint = fingerprint + bookmark.url;
+    }
+    fingerprint = fingerprint + "-";
+    if (bookmark.tags && bookmark.tags.length > 0) {
+      for (let j = 0; j < bookmark.tags.length; j++) {
+        fingerprint = fingerprint + bookmark.tags[j];
+        if (j < bookmark.tags.length - 1) {
+          fingerprint = fingerprint + "|";
+        }
+      }
+    }
+    bookmarkFingerprint.push(fingerprint);
+  }
+  bookmarkFingerprint.sort();
+  return bookmarkFingerprint;
+}
+
+export function createCacheKeyString(bookmarkFingerprint) {
+  let cacheKeyString = "";
+  for (let k = 0; k < bookmarkFingerprint.length; k++) {
+    cacheKeyString = cacheKeyString + bookmarkFingerprint[k];
+    if (k < bookmarkFingerprint.length - 1) {
+      cacheKeyString = cacheKeyString + ",";
+    }
+  }
+  return cacheKeyString;
+}
