@@ -23,6 +23,7 @@
     "framer-motion": "^12.23.12",
     "heatmap.js": "^2.0.5",
     "jsdom": "^26.1.0",
+    "lodash": "^4.17.21",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.536.0",
     "ml-kmeans": "^6.0.0",

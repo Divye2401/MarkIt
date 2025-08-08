@@ -128,32 +128,30 @@ export default function BookmarkClusterMap({ bookmarks }) {
           </div>
 
           {/* Categories Table - Full width on mobile, 35% on desktop */}
-          <div className="flex-1 lg:w-[35%] flex flex-col">
+          <div className="w-full lg:w-[35%]">
             <h3 className="text-lg font-semibold mb-4">Bookmark Categories</h3>
-            <div className="overflow-x-auto flex-1">
-              <table className="min-w-[250px] w-full border border-gray-300 rounded text-sm">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="px-4 py-2 text-left">Category</th>
-                    <th className="px-4 py-2 text-right">Bookmarks</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.clusters.map((cluster, idx) => (
-                    <tr
-                      key={idx}
-                      className="border-t border-gray-200 hover:bg-gray-50"
-                    >
-                      <td className="px-4 py-2 font-medium text-gray-900">
-                        {cluster.label}
-                      </td>
-                      <td className="px-4 py-2 text-right text-gray-600">
-                        {cluster.bookmarks.length}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="h-[300px] sm:h-[400px] bg-white rounded-lg border border-gray-200 flex flex-col">
+              {/* Header */}
+              <div className="px-4 py-2 bg-gray-100 border-b border-gray-200 flex items-center">
+                <div className="flex-1 font-medium">Category</div>
+                <div className="w-20 text-right font-medium">Bookmarks</div>
+              </div>
+              {/* Scrollable rows */}
+              <div className="flex-1 overflow-y-auto divide-y divide-gray-200 flex flex-col">
+                {data.clusters.map((cluster, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center px-4 hover:bg-gray-50 flex-1 min-h-[44px]"
+                  >
+                    <div className="flex-1 font-medium text-gray-900">
+                      {cluster.label}
+                    </div>
+                    <div className="w-20 text-right text-gray-600">
+                      {cluster.bookmarks.length}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

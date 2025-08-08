@@ -1,5 +1,6 @@
 import { supabase } from "../supabaseClient";
 import { fetchUser } from "../Providers/AuthHelpers";
+import { getAccessToken } from "../Providers/AuthHelpers";
 
 export async function fetchFolderById(folderId) {
   const { data, error } = await supabase
@@ -141,4 +142,19 @@ export async function removeBookmarkFromFolder(
     .eq("id", folderId);
   if (updateError) throw new Error(updateError.message);
   return { success: true };
+}
+
+export async function getFolderInsights(folderId) {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new Error("Not authenticated");
+  const res = await fetch(`/api/folder-insights?id=${folderId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+  const data = await res.json();
+
+  return data;
 }
