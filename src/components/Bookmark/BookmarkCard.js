@@ -133,7 +133,9 @@ export default function BookmarkCard({ bookmark, refresh }) {
   // --- Render ---
   return (
     <Card
-      className="relative min-h-[120px] border overflow-hidden"
+      className={`relative min-h-[120px] border overflow-hidden transition-all duration-300 cursor-pointer ${
+        hovered ? "bg-surface-elevated" : "bg-surface"
+      }`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => {
@@ -148,9 +150,6 @@ export default function BookmarkCard({ bookmark, refresh }) {
       }}
       style={{
         minHeight: hovered ? headerHeight + modalHeight : headerHeight,
-        background: hovered ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)",
-        transition: "all 0.3s",
-        cursor: "pointer",
       }}
     >
       {/* Header: avatar, title, and action buttons */}
@@ -173,15 +172,15 @@ export default function BookmarkCard({ bookmark, refresh }) {
           {/* Title (truncated if too long) */}
           <CardTitle
             asChild
-            className="truncate text-blue-700 pb-1 flex-1 min-w-0 flex items-center gap-2"
+            className="truncate text-foreground pb-1 flex-1 min-w-0 flex items-center gap-2"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-foreground">
               {bookmark.title || bookmark.url}
               {bookmark.shared_with.length > 0 && (
                 <button
                   type="button"
                   title="Shared with others"
-                  className="ml-1 inline-flex items-center  text-blue-400 hover:text-blue-600 focus:outline-none"
+                  className="ml-1 inline-flex items-center text-primary/70 hover:text-primary focus:outline-none"
                   onClick={(e) => {
                     e.stopPropagation();
                     toast.info(
@@ -206,7 +205,9 @@ export default function BookmarkCard({ bookmark, refresh }) {
         <div className="flex gap-1 flex-shrink-0">
           <button
             className={`p-2 rounded transition ml-2 ${
-              isFavorite ? "bg-yellow-100" : "hover:bg-gray-100"
+              isFavorite
+                ? "bg-warning/20 text-warning"
+                : "hover:bg-surface-elevated text-foreground-secondary"
             }`}
             onClick={(e) => {
               e.stopPropagation();
@@ -216,13 +217,13 @@ export default function BookmarkCard({ bookmark, refresh }) {
             type="button"
           >
             {isFavorite ? (
-              <Star className="text-yellow-500" size={18} />
+              <Star className="text-warning" size={18} />
             ) : (
-              <StarOff size={18} />
+              <StarOff className="text-foreground-secondary" size={18} />
             )}
           </button>
           <button
-            className="p-2 rounded hover:bg-gray-100 transition ml-2"
+            className="p-2 rounded hover:bg-surface-elevated transition ml-2 text-foreground-secondary"
             onClick={(e) => {
               e.stopPropagation();
               setEditOpen(true);
@@ -233,7 +234,7 @@ export default function BookmarkCard({ bookmark, refresh }) {
             <Pencil size={18} />
           </button>
           <button
-            className="p-2 rounded hover:bg-red-100 transition ml-1"
+            className="p-2 rounded hover:bg-error/10 transition ml-1 text-foreground-secondary hover:text-error"
             onClick={(e) => {
               e.stopPropagation();
               setDeleteOpen(true);
@@ -244,7 +245,7 @@ export default function BookmarkCard({ bookmark, refresh }) {
             <Trash2 size={18} />
           </button>
           <button
-            className="p-2 rounded hover:bg-gray-100 transition ml-2"
+            className="p-2 rounded hover:bg-surface-elevated transition ml-2 text-foreground-secondary"
             onClick={(e) => {
               e.stopPropagation();
               setShowFolderModal(true);
@@ -262,27 +263,29 @@ export default function BookmarkCard({ bookmark, refresh }) {
         ref={modalRef}
         className="absolute left-0 right-0 bottom-0 pointer-events-none"
         style={{
-          background: "rgba(255,255,255,0.98)",
+          background: "var(--color-surface)",
           boxShadow: "0 -2px 16px rgba(0,0,0,0.08)",
-          opacity: hovered ? 0.95 : 0,
+          opacity: hovered ? 0.98 : 0,
           transform: hovered ? "translateY(0)" : "translateY(100%)",
           transition: "all 0.3s",
           zIndex: 10,
         }}
       >
         <CardContent className="pt-2 pb-4 pointer-events-auto">
-          <div className="text-gray-700 text-sm mb-2">{bookmark.summary}</div>
+          <div className="text-body-sm text-foreground mb-2">
+            {bookmark.summary}
+          </div>
           <div className="flex flex-wrap gap-1 mb-2">
             {bookmark.tags?.map((tag) => (
               <span
                 key={tag}
-                className="text-xs bg-blue-100 text-blue-700 rounded px-2 py-0.5"
+                className="text-caption bg-primary/10 text-primary rounded px-2 py-0.5"
               >
                 {tag}
               </span>
             ))}
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-caption text-foreground-muted">
             {bookmark.reading_time ? `⏱️ ${bookmark.reading_time} min` : ""}
             {bookmark.duration ? ` | 🎵 ${bookmark.duration} min` : ""}
           </div>
@@ -330,7 +333,7 @@ export default function BookmarkCard({ bookmark, refresh }) {
               />
               {/* Image upload input for thumbnail */}
               <div>
-                <label className="block mb-1 text-sm font-medium">
+                <label className="block mb-1 text-sm font-medium text-foreground">
                   Thumbnail Image
                 </label>
                 <input
@@ -339,11 +342,11 @@ export default function BookmarkCard({ bookmark, refresh }) {
                   onChange={(e) => {
                     setEditImageFile(e.target.files[0]);
                   }}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  className="block w-full text-sm text-foreground-muted file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
                   disabled={editImageUploading}
                 />
                 {editImageUploading && (
-                  <span className="text-xs text-blue-500">Uploading...</span>
+                  <span className="text-xs text-primary">Uploading...</span>
                 )}
               </div>
               <Input
@@ -383,7 +386,9 @@ export default function BookmarkCard({ bookmark, refresh }) {
             <DialogHeader>
               <DialogTitle>Delete Bookmark</DialogTitle>
             </DialogHeader>
-            <div>Are you sure you want to delete this bookmark?</div>
+            <div className="text-foreground">
+              Are you sure you want to delete this bookmark?
+            </div>
             <div className="flex gap-2 justify-end mt-4">
               <Button
                 type="button"

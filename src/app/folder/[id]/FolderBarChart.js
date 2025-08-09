@@ -32,7 +32,7 @@ export default function FolderBarChart({ bookmarks }) {
   const hasData = data.some((bucket) => bucket.count > 0);
   return (
     <div className="w-full">
-      <h4 className="text-md font-semibold mb-2 text-center">
+      <h4 className="text-heading-sm text-foreground mb-2 text-center">
         Reading Time Distribution
       </h4>
       {hasData ? (
@@ -50,7 +50,7 @@ export default function FolderBarChart({ bookmarks }) {
           </BarChart>
         </ResponsiveContainer>
       ) : (
-        <div className="w-full h-40 flex items-center justify-center text-gray-400">
+        <div className="w-full h-40 flex items-center justify-center text-body text-foreground-muted">
           No reading time data
         </div>
       )}

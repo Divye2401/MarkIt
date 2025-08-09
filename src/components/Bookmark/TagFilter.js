@@ -30,7 +30,7 @@ export default function TagFilter({ bookmarks, selectedTags, onTagSelect }) {
         <input
           type="text"
           placeholder="Filter by tag..."
-          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition text-base bg-white"
+          className="w-full px-4 py-2 rounded-lg border border-border bg-surface text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-body placeholder:text-foreground-muted"
           value={tagQuery}
           onChange={(e) => {
             setTagQuery(e.target.value);
@@ -40,11 +40,11 @@ export default function TagFilter({ bookmarks, selectedTags, onTagSelect }) {
           onBlur={() => setTimeout(() => setShowTagDropdown(false), 150)}
         />
         {showTagDropdown && matchingTags.length > 0 && (
-          <div className="absolute z-20 bg-white border border-gray-200 rounded-lg shadow-md mt-1 w-full max-h-48 overflow-y-auto">
+          <div className="absolute z-20 bg-surface-elevated border border-border rounded-lg shadow-md mt-1 w-full max-h-48 overflow-y-auto">
             {matchingTags.map((tag) => (
               <div
                 key={tag}
-                className="px-4 py-2 cursor-pointer hover:bg-blue-100 text-gray-800"
+                className="px-4 py-2 cursor-pointer hover:bg-primary/10 text-body text-foreground transition"
                 onClick={() => {
                   onTagSelect([...selectedTags, tag]);
                   setTagQuery("");
@@ -61,11 +61,11 @@ export default function TagFilter({ bookmarks, selectedTags, onTagSelect }) {
             {selectedTags.map((tag) => (
               <span
                 key={tag}
-                className="text-sm bg-blue-100 text-blue-700 rounded px-2 py-0.5 flex items-center gap-1"
+                className="text-caption bg-primary/10 text-primary rounded px-2 py-0.5 flex items-center gap-1"
               >
                 {tag}
                 <button
-                  className="ml-1 text-xs text-red-500 hover:underline"
+                  className="ml-1 text-caption text-error hover:underline transition"
                   onClick={() => {
                     onTagSelect(selectedTags.filter((t) => t !== tag));
                   }}
@@ -76,7 +76,7 @@ export default function TagFilter({ bookmarks, selectedTags, onTagSelect }) {
               </span>
             ))}
             <button
-              className="text-xs text-red-500 hover:underline ml-2"
+              className="text-caption text-error hover:underline ml-2 transition"
               onClick={() => {
                 onTagSelect([]);
                 setTagQuery("");

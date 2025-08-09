@@ -6,10 +6,12 @@ export default function BookmarkWelcome({ user, bookmarks }) {
   if (bookmarks && bookmarks.length > 0) {
     return (
       <div className="ml-4">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4 mt-4">
+        <h1 className="text-3xl font-bold text-foreground mb-4 mt-4">
           Welcome, {firstName}!
         </h1>
-        <p className="text-gray-600 mb-6">Here are your current bookmarks!</p>
+        <p className="text-foreground-secondary mb-6">
+          Here are your current bookmarks!
+        </p>
       </div>
     );
   }

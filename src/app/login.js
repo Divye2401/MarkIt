@@ -29,7 +29,7 @@ export default function Login() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen text-center px-4 w-full font-[var(--font-poppins)]">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-background text-center px-4 w-full">
       {/* Cat animation in top right */}
       <div className="absolute top-0 right-10 w-24 h-24 z-50 pointer-events-none transform scale-400 origin-top-right">
         <Lottie animationData={catData} loop />
@@ -41,15 +41,10 @@ export default function Login() {
           loop
           className="w-24 h-24 md:w-32 md:h-32"
         />
-        <h1 className="text-5xl font-bold text-gray-800 tracking-tight">
-          Welcome to Markit!
-        </h1>
+        <h1 className="text-heading-xl text-foreground">Welcome to Markit!</h1>
       </div>
 
-      <div
-        className="font-poppins
-       text-center mt-2 text-lg md:text-xl text-blue-500 italic drop-shadow-sm mb-6"
-      >
+      <div className="text-body-lg text-center mt-2 text-primary italic drop-shadow-sm mb-6">
         Your bookmarks, organized and supercharged by AI.
       </div>
 
@@ -58,13 +53,13 @@ export default function Login() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleLogin}
-        className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+        className="px-6 py-3 bg-primary text-primary-foreground rounded-lg shadow-md hover:bg-primary-hover transition-colors"
       >
         Login with Google
       </motion.button>
 
       {error && (
-        <div className="mt-4 text-red-600 bg-red-100 px-4 py-2 rounded w-full max-w-xs">
+        <div className="mt-4 text-error bg-error/10 border border-error/20 px-4 py-2 rounded w-full max-w-xs">
           {error}
         </div>
       )}

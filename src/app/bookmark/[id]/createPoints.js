@@ -17,7 +17,7 @@ export function createPoints(max, data, width, height) {
     let centerX = Math.round(cellWidth * (col + 0.5) + offsetX); // X position
     let centerY = Math.round(cellHeight * (row + 0.5) + offsetY); // Y position
 
-    const radiusBase = 80 + (cluster.bookmarks.length / max) * 50; // Main blob size
+    const radiusBase = 35 + (cluster.bookmarks.length / max) * 50; // Main blob size
 
     // Clamp center point to stay within bounds
     centerX = Math.max(radiusBase, Math.min(width - radiusBase, centerX));

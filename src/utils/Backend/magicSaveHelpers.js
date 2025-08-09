@@ -260,6 +260,7 @@ ${JSON.stringify(suggestedLinks, null, 2)}
     }),
   });
   const data = await response.json();
+
   return data.choices?.[0]?.message?.content || "";
 }
 //----------------------------------------------
@@ -284,13 +285,27 @@ export function extractLinksWithDescriptions(aiAnswer) {
 }
 //---------------------------------------------------------------------------------------------------
 // Helper: Fetch top 2 live links from Google Custom Search API
-export async function fetchGoogleLinks(query) {
-  query = `$Blogs about ${query} `;
+export async function fetchGoogleLinks(query, semantic) {
   const apiKey = process.env.GOOGLE_API_KEY;
   const cx = process.env.GOOGLE_CSE_ID;
-  const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(
-    query
-  )}&cx=${cx}&key=${apiKey}&num=2`;
+  let url = "";
+
+  const randomStart = Math.floor(Math.random() * 15) + 1; // Start from result 1-15
+  const dateOptions = ["d7", "d15", "d30", "m3"]; // 7 days, 15 days, 30 days, 3 months
+  const randomDateRestrict =
+    dateOptions[Math.floor(Math.random() * dateOptions.length)];
+
+  if (semantic) {
+    query = `${query} -site:google.com -site:youtube.com -site:reddit.com`;
+    url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(
+      query
+    )}&cx=${cx}&key=${apiKey}&num=2&dateRestrict=${randomDateRestrict}&start=${randomStart}`;
+  } else {
+    query = `${query} -site:google.com`;
+    url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(
+      query
+    )}&cx=${cx}&key=${apiKey}&num=2&start=${randomStart}&dateRestrict=${randomDateRestrict}`;
+  }
   const res = await fetch(url);
   const data = await res.json();
   if (!data.items) return [];

@@ -28,13 +28,13 @@ export async function fetchKnowledgeGaps() {
 export function getPriorityColor(priority) {
   switch (priority) {
     case "high":
-      return "text-red-600 bg-red-50 border-red-200";
+      return "text-error bg-error/10 border-error/60";
     case "medium":
-      return "text-yellow-600 bg-yellow-50 border-yellow-200";
+      return "text-warning bg-warning/10 border-warning/60";
     case "low":
-      return "text-green-600 bg-green-50 border-green-200";
+      return "text-success bg-success/10 border-success/60";
     default:
-      return "text-gray-600 bg-gray-50 border-gray-200";
+      return "text-foreground-secondary bg-surface border-border";
   }
 }
 

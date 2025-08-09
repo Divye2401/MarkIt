@@ -18,8 +18,10 @@ export default function SearchResultsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl w-[60vw] max-h-[80vh] flex flex-col">
         <DialogHeader>
-          <DialogTitle>Semantic Search Results</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-heading-lg text-foreground">
+            Semantic Search Results
+          </DialogTitle>
+          <DialogDescription className="text-body-sm text-foreground-secondary">
             Here are the results for your query. You can add suggested links to
             your bookmarks.
           </DialogDescription>
@@ -29,30 +31,32 @@ export default function SearchResultsDialog({
             <>
               {/* Our Links */}
               <div>
-                <h3 className="text-lg font-semibold mb-2">Your Bookmarks</h3>
+                <h3 className="text-heading-md text-foreground mb-2">
+                  Your Bookmarks
+                </h3>
                 <div className="space-y-3">
                   {searchResults.ourLinks &&
                   searchResults.ourLinks.length > 0 ? (
                     searchResults.ourLinks.map((link) => (
                       <div
                         key={link.url}
-                        className="bg-gray-50 rounded-lg p-4 border flex flex-col gap-1"
+                        className="bg-surface rounded-lg p-4 border border-border flex flex-col gap-1"
                       >
                         <a
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-700 font-semibold hover:underline text-base"
+                          className="text-primary text-heading-sm hover:underline transition"
                         >
                           {link.title}
                         </a>
-                        <div className="text-gray-700 text-sm">
+                        <div className="text-body-sm text-foreground-secondary">
                           {link.description}
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="text-gray-400">
+                    <div className="text-body-sm text-foreground-muted">
                       No relevant bookmarks found.
                     </div>
                   )}
@@ -60,7 +64,7 @@ export default function SearchResultsDialog({
               </div>
               {/* Suggested Links */}
               <div>
-                <h3 className="text-lg font-semibold mt-6 mb-2">
+                <h3 className="text-heading-md text-foreground mt-6 mb-2">
                   AI Suggested Links
                 </h3>
                 <div className="space-y-3">
@@ -69,21 +73,21 @@ export default function SearchResultsDialog({
                     searchResults.suggestedLinks.map((link) => (
                       <div
                         key={link.url}
-                        className="bg-blue-50 rounded-lg p-4 border flex flex-col gap-1 relative"
+                        className="bg-ai-accent/5 rounded-lg p-4 border border-ai-accent/20 flex flex-col gap-1 relative"
                       >
                         <div className="flex items-center gap-2">
                           <a
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-800 font-semibold hover:underline text-base"
+                            className="text-ai-accent text-heading-sm hover:underline transition"
                           >
                             {link.title}
                           </a>
                           <Button
                             size="icon"
                             variant="outline"
-                            className="ml-auto border-blue-400 text-blue-600 hover:bg-blue-100"
+                            className="ml-auto border-ai-accent/40 text-ai-accent hover:bg-ai-accent/10 transition"
                             onClick={() => handleAddSuggested(link)}
                             disabled={addingId === link.url}
                           >
@@ -94,13 +98,15 @@ export default function SearchResultsDialog({
                             )}
                           </Button>
                         </div>
-                        <div className="text-gray-700 text-sm mt-1">
+                        <div className="text-body-sm text-foreground-secondary mt-1">
                           {link.description}
                         </div>
                       </div>
                     ))
                   ) : (
-                    <div className="text-gray-400">No suggestions found.</div>
+                    <div className="text-body-sm text-foreground-muted">
+                      No suggestions found.
+                    </div>
                   )}
                 </div>
               </div>

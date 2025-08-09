@@ -29,7 +29,7 @@ export async function POST(request) {
     if (errorResponse) return errorResponse;
 
     // Parse body
-    const { query } = await request.json();
+    const { query, semantic } = await request.json();
     if (!query)
       return NextResponse.json(
         { success: false, error: "Missing query" },
@@ -60,7 +60,7 @@ export async function POST(request) {
       .slice(0, 3);
 
     // Fetch 2 live links from Google
-    const googleLinks = await fetchGoogleLinks(query);
+    const googleLinks = await fetchGoogleLinks(query, semantic);
 
     // Get AI-generated answer, passing googleLinks as suggestedLinks
     const aiAnswer = await summarizeSearchResultsWithAI(

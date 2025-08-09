@@ -22,7 +22,7 @@ export default function SuggestedReads({ suggestedResults }) {
             </li>
           ))
         ) : (
-          <li>No suggestions found.</li>
+          <li>Loading...</li>
         )}
       </ul>
     </div>

@@ -41,14 +41,16 @@ export default function AddUserModal({ open, onClose, id }) {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add User</DialogTitle>
+          <DialogTitle className="text-heading-md text-foreground">
+            Add User
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <label className="font-semibold text-zinc-700">User Email:</label>
+          <label className="text-heading-sm text-foreground">User Email:</label>
           <input
             type="email"
-            className={`border rounded px-3 py-2 w-full ${
-              touched && !valid ? "border-red-500" : ""
+            className={`border rounded px-3 py-2 w-full bg-surface text-foreground focus:ring-2 focus:ring-primary/20 focus:border-primary ${
+              touched && !valid ? "border-error" : "border-border"
             }`}
             placeholder="user@example.com"
             value={email}
@@ -59,21 +61,21 @@ export default function AddUserModal({ open, onClose, id }) {
             required
           />
           {touched && !valid && (
-            <span className="text-red-500 text-sm">
+            <span className="text-error text-body-sm">
               Please enter a valid email address.
             </span>
           )}
           <div className="flex gap-2 justify-end mt-2">
             <button
               type="button"
-              className="px-4 py-2 bg-zinc-700 text-white rounded hover:bg-zinc-800"
+              className="px-4 py-2 bg-surface text-foreground-secondary rounded hover:bg-surface-elevated transition"
               onClick={onClose}
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary-hover disabled:opacity-50 transition"
               disabled={!valid}
             >
               Add

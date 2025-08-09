@@ -40,7 +40,7 @@ export async function searchBookmarks(query) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({ query, semantic: true }),
   });
   const data = await res.json();
   return data;

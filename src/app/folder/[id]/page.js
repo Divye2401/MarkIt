@@ -49,34 +49,40 @@ export default function FolderDetailPage() {
   const [shareOpen, setShareOpen] = useState(false);
 
   return (
-    <div className="max-w-7xl mx-auto py-10 px-4 space-y-8 ">
+    <div className="max-w-7xl mx-auto py-10 px-4 space-y-8 bg-background min-h-screen">
       {/* Top: AI Summary + Key Stats */}
-      <section className="bg-white rounded shadow p-6 mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <section className="bg-surface rounded-lg shadow border border-border p-6 mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold mb-2">
+          <h2 className="text-heading-lg text-foreground mb-2">
             {folderLoading ? "Loading..." : folder?.name || "Folder"}
           </h2>
         </div>
         <div className="flex gap-6">
           <div className="text-center">
-            <div className="text-2xl font-bold">
+            <div className="text-heading-md text-foreground">
               {folderLoading
                 ? "--"
                 : folder?.description
                 ? folder.description
                 : "--"}
             </div>
-            <div className="text-xs text-gray-500">Description</div>
+            <div className="text-caption text-foreground-muted">
+              Description
+            </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold">
+            <div className="text-heading-md text-foreground">
               {folderLoading ? "--" : folder?.doc_count ?? "--"}
             </div>
-            <div className="text-xs text-gray-500">Total Bookmarks</div>
+            <div className="text-caption text-foreground-muted">
+              Total Bookmarks
+            </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold">{`${avgReadingTime} mins`}</div>
-            <div className="text-xs text-gray-500">Avg Reading Time</div>
+            <div className="text-heading-md text-foreground">{`${avgReadingTime} mins`}</div>
+            <div className="text-caption text-foreground-muted">
+              Avg Reading Time
+            </div>
           </div>
         </div>
       </section>
@@ -84,39 +90,47 @@ export default function FolderDetailPage() {
       {/* Middle: Charts Row */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Left: Pie/Bar Chart */}
-        <div className="bg-white rounded shadow p-6 min-h-[250px] flex flex-col items-center justify-center">
+        <div className="bg-surface rounded-lg shadow border border-border p-6 min-h-[250px] flex flex-col items-center justify-center">
           <FolderPieChart bookmarks={bookmarks} />
         </div>
         {/* Center: Bar Chart */}
-        <div className="bg-white rounded shadow p-6 min-h-[250px] flex flex-col items-center justify-center">
+        <div className="bg-surface rounded-lg shadow border border-border p-6 min-h-[250px] flex flex-col items-center justify-center">
           <FolderBarChart bookmarks={bookmarks} />
         </div>
         {/* Right: Timeline/Activity Heatmap */}
-        <div className="bg-white rounded shadow p-6 min-h-[250px] flex flex-col items-center justify-center">
+        <div className="bg-surface rounded-lg shadow border border-border p-6 min-h-[250px] flex flex-col items-center justify-center">
           <FolderTimeline bookmarks={bookmarks} />
         </div>
       </section>
 
       {/* Bottom: Bookmark Grid/List */}
-      <section className="bg-white rounded shadow p-6 mt-4">
-        <h3 className="font-semibold mb-4">Bookmarks in this Folder</h3>
+      <section className="bg-surface rounded-lg shadow border border-border p-6 mt-4">
+        <h3 className="text-heading-md text-foreground mb-4">
+          Bookmarks in this Folder
+        </h3>
         {bookmarksLoading ? (
-          <div className="text-gray-400">Loading bookmarks...</div>
+          <div className="text-body text-foreground-secondary">
+            Loading bookmarks...
+          </div>
         ) : bookmarks.length === 0 ? (
-          <div className="text-gray-400">No bookmarks in this folder.</div>
+          <div className="text-body text-foreground-muted">
+            No bookmarks in this folder.
+          </div>
         ) : (
           <ul className="divide-y">
             {bookmarks.map((b) => (
               <li
                 key={b.id}
-                className="py-2 flex flex-col md:flex-row md:items-center md:justify-between hover:bg-blue-50 transition cursor-pointer"
+                className="py-2 flex flex-col md:flex-row md:items-center md:justify-between hover:bg-surface-elevated transition cursor-pointer rounded"
               >
                 <Link
                   href={`/bookmark/${b.id}`}
                   className="flex-1 flex justify-between items-center w-full gap-2 py-1"
                 >
-                  <span className="font-medium">{b.title || b.url}</span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-body text-foreground font-medium">
+                    {b.title || b.url}
+                  </span>
+                  <span className="text-caption text-foreground-muted">
                     {b.reading_time ? `${b.reading_time} min` : ""}
                   </span>
                 </Link>
@@ -128,7 +142,7 @@ export default function FolderDetailPage() {
         {/* Share Button */}
         <div className="mt-4 flex justify-end">
           <button
-            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            className="px-4 py-2 bg-success text-primary-foreground rounded hover:bg-success/90 transition"
             onClick={() => setShareOpen(true)}
           >
             Share

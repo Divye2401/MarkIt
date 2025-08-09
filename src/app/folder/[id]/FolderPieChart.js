@@ -40,14 +40,14 @@ export default function FolderPieChart({ bookmarks }) {
   const data = getTagData(bookmarks);
   if (!data.length) {
     return (
-      <div className="w-full h-40 flex items-center justify-center text-gray-400">
+      <div className="w-full h-40 flex items-center justify-center text-body text-foreground-muted">
         No tag data
       </div>
     );
   }
   return (
     <div className="w-full">
-      <h4 className="text-md font-semibold mb-2 text-center">
+      <h4 className="text-heading-sm text-foreground mb-2 text-center">
         Labeled By Tags
       </h4>
       <ResponsiveContainer width="100%" height={300}>

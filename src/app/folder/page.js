@@ -44,18 +44,18 @@ export default function FolderPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto py-10">
+    <div className="max-w-2xl mx-auto py-10 bg-background min-h-screen px-4">
       <div className="flex items-center mb-6 gap-4">
         {/* Black Arrow Button for Back */}
         <button
-          className="bg-black text-white rounded-full w-10 h-10 flex items-center justify-center hover:bg-gray-900 transition"
+          className="bg-foreground text-background rounded-full w-10 h-10 flex items-center justify-center hover:bg-foreground-secondary transition"
           aria-label="Back"
           type="button"
           onClick={() => router.back()}
         >
           <ArrowLeft size={24} />
         </button>
-        <h1 className="text-2xl font-bold">Folders</h1>
+        <h1 className="text-heading-lg text-foreground">Folders</h1>
         <div className="flex-1 flex justify-end">
           <Button onClick={() => setShowInput((v) => !v)}>
             <Plus className="mr-2" />
@@ -74,9 +74,13 @@ export default function FolderPage() {
           <Button disabled>Save</Button>
         </div>
       )}
-      {isLoading && <div className="text-gray-500">Loading folders...</div>}
+      {isLoading && (
+        <div className="text-body text-foreground-secondary">
+          Loading folders...
+        </div>
+      )}
       {isError && (
-        <div className="text-red-500">
+        <div className="text-body text-error">
           {error?.message || "Failed to load folders."}
         </div>
       )}
@@ -84,25 +88,25 @@ export default function FolderPage() {
         {folders.map((folder) => (
           <div
             key={folder.id}
-            className="p-5 bg-white rounded-xl shadow flex items-center gap-4 hover:bg-blue-50 transition border border-gray-100"
+            className="p-5 bg-surface rounded-xl shadow flex items-center gap-4 hover:bg-surface-elevated transition border border-border"
           >
             <div
               className="flex-1 flex items-center gap-4 cursor-pointer"
               onClick={() => router.push(`/folder/${folder.id}`)}
             >
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary">
                 <FolderIcon size={28} />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-lg truncate">
+                <div className="text-heading-sm text-foreground truncate">
                   {folder.name}
                 </div>
                 {folder.description && (
-                  <div className="text-gray-500 text-sm truncate">
+                  <div className="text-body-sm text-foreground-secondary truncate">
                     {folder.description}
                   </div>
                 )}
-                <div className="flex gap-4 mt-1 text-xs text-gray-400">
+                <div className="flex gap-4 mt-1 text-caption text-foreground-muted">
                   <span>{folder.doc_count ?? 0} bookmarks</span>
                   {folder.updated_at && (
                     <span>
@@ -118,7 +122,7 @@ export default function FolderPage() {
                 e.stopPropagation();
                 handleGetInsights(folder.id);
               }}
-              className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+              className="p-2 text-foreground-secondary hover:text-ai-accent hover:bg-ai-accent/10 rounded-lg transition-colors"
               title="Get AI Insights"
             >
               <Lightbulb size={20} />
@@ -129,13 +133,15 @@ export default function FolderPage() {
 
       {/* Insights Panel */}
       {selectedInsights && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-foreground/30 flex items-center justify-center">
+          <div className="bg-surface-elevated rounded-lg p-6 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto border border-border">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Folder Insights</h2>
+              <h2 className="text-heading-md text-foreground">
+                Folder Insights
+              </h2>
               <button
                 onClick={() => setSelectedInsights(null)}
-                className="text-gray-500 hover:text-gray-700 p-1 hover:bg-gray-100 rounded-full transition-colors"
+                className="text-foreground-secondary hover:text-foreground p-1 hover:bg-surface rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
@@ -143,14 +149,20 @@ export default function FolderPage() {
 
             {/* Insights Content */}
             <div className="space-y-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="font-medium mb-2">Main Insights</h3>
-                <p className="text-gray-700">{selectedInsights.insights[0]}</p>
+              <div className="bg-ai-accent/10 p-4 rounded-lg border border-ai-accent/20">
+                <h3 className="text-heading-sm text-ai-accent mb-2">
+                  Main Insights
+                </h3>
+                <p className="text-body text-foreground">
+                  {selectedInsights.insights[0]}
+                </p>
               </div>
 
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h3 className="font-medium mb-2">Suggested Improvements</h3>
-                <p className="text-gray-700">
+              <div className="bg-success/10 p-4 rounded-lg border border-success/20">
+                <h3 className="text-heading-sm text-success mb-2">
+                  Suggested Improvements
+                </h3>
+                <p className="text-body text-foreground">
                   {selectedInsights.improvements[0]}
                 </p>
               </div>
@@ -161,9 +173,11 @@ export default function FolderPage() {
 
       {/* Loading Overlay */}
       {insightsLoading && (
-        <div className="fixed inset-0 bg-black/30 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-4">
-            <div className="animate-pulse">Generating insights...</div>
+        <div className="fixed inset-0 bg-foreground/30 flex items-center justify-center">
+          <div className="bg-surface-elevated rounded-lg p-4 border border-border">
+            <div className="animate-pulse text-body text-foreground">
+              Generating insights...
+            </div>
           </div>
         </div>
       )}

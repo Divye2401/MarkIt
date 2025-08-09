@@ -12,7 +12,6 @@ export default function FolderTimeline({ bookmarks }) {
     }
   });
 
-  console.log(dateCounts);
   const values = Object.entries(dateCounts).map(([date, count]) => ({
     date,
     count,
@@ -26,7 +25,7 @@ export default function FolderTimeline({ bookmarks }) {
 
   return (
     <div className="w-[80%]">
-      <h4 className="text-md font-semibold mb-2 text-center">
+      <h4 className="text-heading-sm text-foreground mb-2 text-center">
         Bookmark Activity
       </h4>
       <CalendarHeatmap
@@ -41,6 +40,7 @@ export default function FolderTimeline({ bookmarks }) {
           return "color-github-1";
         }}
         showWeekdayLabels={true}
+        gutterSize={4}
       />
     </div>
   );

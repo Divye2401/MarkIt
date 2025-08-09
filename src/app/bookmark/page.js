@@ -172,8 +172,10 @@ export default function BookmarkPage() {
   // --- Loading & Auth States ---
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Loading...</div>
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="text-heading-md text-foreground-secondary">
+          Loading...
+        </div>
       </div>
     );
   }
@@ -183,7 +185,7 @@ export default function BookmarkPage() {
 
   // --- Main Render ---
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background">
       {/* Sidebar */}
       <Sidebar
         selectedFolderId={selectedFolderId}
@@ -195,18 +197,8 @@ export default function BookmarkPage() {
         {bookmarks.length > 0 && (
           <div className="w-full px-4 mt-8 mb-6">
             <div className="flex flex-col md:flex-row items-end gap-4 w-full">
-              {/* Tag Filter and Arrow Button on the left */}
+              {/* Tag Filter */}
               <div className="w-full md:w-1/3 flex items-end gap-2">
-                <button
-                  className="bg-black text-white rounded-full w-16 h-10 flex items-center justify-center hover:bg-gray-900 transition"
-                  aria-label="Front"
-                  type="button"
-                  onClick={() => {
-                    router.push("/folder");
-                  }}
-                >
-                  <ArrowRight size={24} />
-                </button>
                 <TagFilter
                   bookmarks={bookmarks}
                   selectedTags={selectedTags}
@@ -219,21 +211,21 @@ export default function BookmarkPage() {
                   <Input
                     type="text"
                     placeholder="Search through your documents..."
-                    className="pl-12 pr-4 py-5 w-full rounded-full bg-white/80 backdrop-blur-md \
-                             border border-gray-200 shadow-sm focus:border-blue-400 \
-                             focus:ring-2 focus:ring-blue-300 transition-all duration-300\
-                             placeholder:text-gray-400 hover:shadow-md"
+                    className="pl-12 pr-4 py-5 w-full rounded-full bg-surface/80 backdrop-blur-md \
+                             border border-border shadow-sm focus:border-primary \
+                             focus:ring-2 focus:ring-primary/20 transition-all duration-300\
+                             placeholder:text-foreground-muted hover:shadow-md"
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                   />
                   <Search
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground-muted"
                     size={20}
                   />
                 </div>
                 <Button
                   onClick={handleSearch}
-                  className="scale-100 px-8 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all font-bold text-lg ml-2"
+                  className="scale-100 px-8 py-2 rounded-full bg-primary text-primary-foreground hover:bg-primary-hover transition-all font-semibold text-lg ml-2"
                   disabled={searchValue.trim().length < 8}
                 >
                   Search
@@ -260,7 +252,11 @@ export default function BookmarkPage() {
 
         {/* Bookmarks Grid */}
         {bookmarksLoading ? (
-          <div>Loading...</div>
+          <div className="text-center py-8">
+            <div className="text-body text-foreground-secondary">
+              Loading bookmarks...
+            </div>
+          </div>
         ) : (
           <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start px-4">
             {sortedBookmarks.map((b) => (
@@ -276,7 +272,9 @@ export default function BookmarkPage() {
           </div>
         )}
         {/* Bookmark Clusters Visualization */}
-        <BookmarkClusterMap bookmarks={bookmarks} />
+        <div className="px-4">
+          <BookmarkClusterMap bookmarks={bookmarks} />
+        </div>
 
         {/* Knowledge Gap Analysis */}
         <div className="mt-8 px-4">

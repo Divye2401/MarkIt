@@ -66,11 +66,10 @@ export default function BookmarkDetailPage({ params }) {
   // Fetch suggested results from semantic search API using bookmark.embedding
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (!bookmark?.title && !bookmark?.summary) return;
+      if (!bookmark?.tags || bookmark.tags.length === 0) return;
       try {
-        const query = `${bookmark.title || ""} ${
-          bookmark.summary || ""
-        }`.trim();
+        const randomCount = Math.floor(Math.random() * 4) + 1; // Random number 1-4
+        const query = bookmark.tags.slice(0, randomCount).join(" ");
         const accessToken = await getAccessToken();
         const res = await fetch("/api/semantic-search", {
           method: "POST",
@@ -78,7 +77,7 @@ export default function BookmarkDetailPage({ params }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({ query }),
+          body: JSON.stringify({ query, semantic: false }),
         });
         const data = await res.json();
 
@@ -93,7 +92,7 @@ export default function BookmarkDetailPage({ params }) {
       }
     };
     fetchSuggestions();
-  }, [bookmark?.title, bookmark?.summary]);
+  }, [bookmark?.tags]);
 
   // Save handler for editing bookmark
   const handleEditBookmark = async () => {
