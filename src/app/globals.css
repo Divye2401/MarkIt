@@ -67,9 +67,9 @@
   --radius: 0.625rem;
 
   /* Light Theme - Markit Design System */
-  --background: #edeffa; /* #ffffff - Pure white */
-  --surface: oklch(0.985 0.003 247.858); /* #f9fafb - Light gray surface */
-  --surface-elevated: oklch(1 0 0); /* #ffffff - Elevated surface */
+  --background: #e8ecff; /* Brighter purple-blue background */
+  --surface: #f0f4ff; /* High contrast blue-white surface */
+  --surface-elevated: #ffffff; /* Pure white for maximum pop */
 
   --foreground: oklch(0.224 0.008 253.894); /* #1f2937 - Primary text */
   --foreground-secondary: oklch(
@@ -81,8 +81,8 @@
   --primary-hover: oklch(0.357 0.158 263.89); /* #3730a3 - Hover state */
   --primary-foreground: oklch(1 0 0); /* #ffffff - White text on primary */
 
-  --border: oklch(0.92 0.004 247.858); /* #e5e7eb - Light border */
-  --border-light: oklch(0.954 0.006 247.858); /* #f3f4f6 - Lighter border */
+  --border: #d4d8ff; /* More vibrant purple-blue border */
+  --border-light: #e8ecff; /* Lighter vibrant border */
 
   /* Accent Colors */
   --success: oklch(0.699 0.157 166.11); /* #10b981 - Success green */
@@ -125,9 +125,9 @@
 
 .dark {
   /* Dark Theme - Markit Design System - Inspired by rich dark UI */
-  --background: #36383a; /* Custom dark background */
-  --surface: #22272a; /* Custom dark surface */
-  --surface-elevated: oklch(0.25 0.02 287); /* Elevated surface */
+  --background: #1e1e1e; /* Deep blue-black */
+  --surface: #1e2328; /* Blue-tinted surface */
+  --surface-elevated: #2a3138; /* Lighter blue-gray */
 
   --foreground: oklch(0.963 0.006 229.847); /* #f1f5f9 - Light slate text */
   --foreground-secondary: oklch(
@@ -226,35 +226,35 @@
 
   /* Predefined text styles */
   .text-heading-xl {
-    @apply font-heading text-4xl md:text-5xl font-bold tracking-tight;
+    @apply font-heading text-4xl md:text-6xl font-bold tracking-tight leading-tight;
   }
 
   .text-heading-lg {
-    @apply font-heading text-2xl md:text-3xl font-semibold;
+    @apply font-heading text-3xl md:text-4xl font-bold tracking-tight leading-tight;
   }
 
   .text-heading-md {
-    @apply font-heading text-xl font-semibold;
+    @apply font-heading text-2xl font-semibold tracking-wide leading-relaxed;
   }
 
   .text-heading-sm {
-    @apply font-heading text-lg font-medium;
+    @apply font-heading text-xl font-semibold tracking-wide leading-relaxed;
   }
 
   .text-body-lg {
-    @apply font-body text-lg text-foreground;
+    @apply font-body text-lg text-foreground leading-relaxed;
   }
 
   .text-body {
-    @apply font-body text-base text-foreground;
+    @apply font-body text-base text-foreground leading-relaxed;
   }
 
   .text-body-sm {
-    @apply font-body text-sm text-foreground-secondary;
+    @apply font-body text-sm text-foreground-secondary leading-relaxed;
   }
 
   .text-caption {
-    @apply font-body text-xs text-foreground-muted;
+    @apply font-body text-xs text-foreground-muted leading-normal tracking-wide;
   }
 
   .text-code {

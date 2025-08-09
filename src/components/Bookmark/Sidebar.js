@@ -160,6 +160,7 @@ export default function Sidebar({
               variant="default"
               onClick={handleCreateFolder}
               disabled={!newFolderName.trim()}
+              className="transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
             >
               Save
             </Button>

@@ -133,7 +133,7 @@ export default function BookmarkCard({ bookmark, refresh }) {
   // --- Render ---
   return (
     <Card
-      className={`relative min-h-[120px] border overflow-hidden transition-all duration-300 cursor-pointer ${
+      className={`relative min-h-[120px] border border-border/50 overflow-hidden transition-all duration-300 cursor-pointer rounded-2xl shadow-sm hover:shadow-md  ${
         hovered ? "bg-surface-elevated" : "bg-surface"
       }`}
       onMouseEnter={() => setHovered(true)}
@@ -206,7 +206,7 @@ export default function BookmarkCard({ bookmark, refresh }) {
           <button
             className={`p-2 rounded transition ml-2 ${
               isFavorite
-                ? "bg-warning/20 text-warning"
+                ? "bg-[#FFEB7F]/20 text-warning"
                 : "hover:bg-surface-elevated text-foreground-secondary"
             }`}
             onClick={(e) => {
@@ -223,7 +223,7 @@ export default function BookmarkCard({ bookmark, refresh }) {
             )}
           </button>
           <button
-            className="p-2 rounded hover:bg-surface-elevated transition ml-2 text-foreground-secondary"
+            className="p-2 rounded hover:bg-green-100 transition ml-2 text-foreground-secondary"
             onClick={(e) => {
               e.stopPropagation();
               setEditOpen(true);
@@ -245,7 +245,7 @@ export default function BookmarkCard({ bookmark, refresh }) {
             <Trash2 size={18} />
           </button>
           <button
-            className="p-2 rounded hover:bg-surface-elevated transition ml-2 text-foreground-secondary"
+            className="p-2 rounded hover:bg-yellow-100 transition ml-2 text-foreground-secondary"
             onClick={(e) => {
               e.stopPropagation();
               setShowFolderModal(true);

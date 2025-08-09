@@ -11,7 +11,7 @@ export function ThemeToggle({ className = "" }) {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className={`relative  transition-all duration-300 hover:bg-accent ${className}`}
+      className={`relative  transition-all duration-300 hover:bg-accent hover:scale-105 ${className}`}
       title={`Switch to ${theme === "light" ? "dark" : "light"} theme`}
     >
       {/* Sun icon for light theme */}

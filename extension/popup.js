@@ -102,6 +102,12 @@ async function saveBookmark(type) {
       }
     );
 
+    if (response.status === 401) {
+      showStatus("Please login first. A new tab will open for login.", "info");
+      const loginUrl = `${currentConfig.development.appUrl}`;
+      chrome.tabs.create({ url: loginUrl });
+      return;
+    }
     if (!response.ok) {
       throw new Error("Failed to save bookmark");
     }

@@ -130,7 +130,7 @@ export default function AddBookmarkModal({ open, onClose, onAdd }) {
                 Cancel
               </button>
               <button
-                className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary-hover disabled:opacity-50 transition"
+                className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary-hover hover:shadow-lg disabled:opacity-50 transition-all duration-300 hover:scale-105 active:scale-95"
                 onClick={() => {
                   onAdd(url, mediaUrl);
                   setUrl("");

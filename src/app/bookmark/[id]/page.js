@@ -5,6 +5,7 @@ import {
   fetchBookmarkById,
   updateBookmark,
 } from "../../../utils/Frontend/BookmarkHelpers";
+import { fetchFoldersByBookmarkId } from "../../../utils/Frontend/FolderHelpers";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -37,6 +38,17 @@ export default function BookmarkDetailPage({ params }) {
   } = useQuery({
     queryKey: ["onebookmark", id],
     queryFn: () => fetchBookmarkById(id),
+    enabled: !!id,
+  });
+
+  // Fetch folders containing this bookmark
+  const {
+    data: folders,
+    isLoading: foldersLoading,
+    error: foldersError,
+  } = useQuery({
+    queryKey: ["bookmark-folders", id],
+    queryFn: () => fetchFoldersByBookmarkId(id),
     enabled: !!id,
   });
 
@@ -179,7 +191,7 @@ export default function BookmarkDetailPage({ params }) {
         initial={{ opacity: 0, x: -60 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7, ease: "easeOut" }}
-        className="relative z-10 max-w-2xl w-full p-6 bg-zinc-900 text-zinc-100 rounded-lg shadow-lg mt-8"
+        className="relative z-10 max-w-3xl w-full p-6 bg-zinc-900 text-zinc-100 rounded-lg shadow-lg mt-8"
       >
         <div className="mb-4 border-b border-zinc-700 pb-2">
           {/* Editable title input with original styling */}
@@ -259,19 +271,47 @@ export default function BookmarkDetailPage({ params }) {
         </div>
         <div className="mt-4 mb-2">
           <div className="text-sm font-semibold text-zinc-300 mb-1">
-            Folder:
+            Folders:
           </div>
-          {/* Modernized folder display with dark hover */}
-          <div className="bg-zinc-800 p-2 rounded text-zinc-200 text-sm hover:bg-zinc-900 transition-all">
-            {bookmark.folder_name || "(No Folder)"}
-          </div>
-          <Link
-            href="/folder"
-            target="_blank"
-            className="text-blue-400 text-xs hover:underline ml-2"
-          >
-            View All in Folder
-          </Link>
+          {/* Display fetched folders */}
+          {foldersLoading ? (
+            <div className="bg-zinc-800 p-2 rounded text-zinc-400 text-sm">
+              Loading folders...
+            </div>
+          ) : foldersError ? (
+            <div className="bg-zinc-800 p-2 rounded text-red-400 text-sm">
+              Error loading folders
+            </div>
+          ) : folders && folders.length > 0 ? (
+            <div className="space-y-2">
+              {folders.map((folder) => (
+                <div
+                  key={folder.id}
+                  className="bg-zinc-800 p-2 rounded text-zinc-200 text-sm hover:bg-zinc-900 transition-all flex items-center justify-between"
+                >
+                  <span>{folder.name}</span>
+                  <Link
+                    href={`/folder/${folder.id}`}
+                    target="_blank"
+                    className="text-blue-400 text-xs hover:underline"
+                  >
+                    View Folder
+                  </Link>
+                </div>
+              ))}
+              <Link
+                href="/folder"
+                target="_blank"
+                className="text-blue-400 text-xs hover:underline inline-block"
+              >
+                View All Folders
+              </Link>
+            </div>
+          ) : (
+            <div className="bg-zinc-800 p-2 rounded text-zinc-400 text-sm hover:bg-zinc-900 transition-all">
+              (No Folders)
+            </div>
+          )}
         </div>
         {/* Suggested Reads Section */}
         <SuggestedReads suggestedResults={suggestedResults} />

@@ -53,7 +53,7 @@ export default function Login() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={handleLogin}
-        className="px-6 py-3 bg-primary text-primary-foreground rounded-lg shadow-md hover:bg-primary-hover transition-colors"
+        className="px-6 py-3 bg-primary text-primary-foreground rounded-lg shadow-md hover:shadow-xl hover:bg-primary-hover transition-all duration-300 hover:scale-105 active:scale-95"
       >
         Login with Google
       </motion.button>

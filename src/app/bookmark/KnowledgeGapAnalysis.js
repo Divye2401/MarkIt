@@ -56,7 +56,7 @@ export default function KnowledgeGapAnalysis() {
   }
 
   return (
-    <div className="bg-surface rounded-lg shadow p-6 border border-border">
+    <div className="bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 border border-border/50">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
