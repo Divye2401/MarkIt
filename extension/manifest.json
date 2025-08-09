@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "Markit Extension",
+  "version": "1.0",
+  "description": "Save bookmarks to Markit with one click",
+  "permissions": ["activeTab", "storage", "tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:3000/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Save to Markit"
+  },
+  "icons": {
+    "48": "icons/icon48.png"
+  }
+}
