@@ -341,3 +341,46 @@ export function createCacheKeyString(bookmarkFingerprint) {
   }
   return cacheKeyString;
 }
+
+export async function summarizeBookmarks(bookmarks) {
+  // 1) Keep only unique tags
+  const allTagsList = bookmarks.flatMap((bookmark) => bookmark.tags ?? []);
+  const allTags = [...new Set(allTagsList)];
+
+  // 2) Count how many bookmarks have each tag
+  const tagCounts = {};
+  for (const bookmark of bookmarks) {
+    const tags = bookmark?.tags ?? [];
+    for (const tag of tags) {
+      tagCounts[tag] = (tagCounts[tag] ?? 0) + 1;
+    }
+  }
+
+  // 3) Make a list of { tag, count }, sort by count (desc), then take top 10
+  const topTags = Object.keys(tagCounts)
+    .map((tag) => ({ tag, count: tagCounts[tag] }))
+    .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag)) // tie-breaker by name
+    .slice(0, 10);
+
+  // 4) Build a few bookmark examples (title + short summary) for AI context
+  //    Limit to first 15 so it doesn't get too long.
+  const exampleBookmarks = bookmarks
+    .slice(0, 10)
+    .map((b) => {
+      const title = b?.title ?? "Untitled";
+      const summaryText = (b?.summary ?? "No summary").toString();
+      const shortSummary =
+        summaryText.length > 100
+          ? summaryText.slice(0, 100) + "..."
+          : summaryText;
+      return `${title}: ${shortSummary}`;
+    })
+    .join("\n");
+
+  const val = {
+    topTags,
+    exampleBookmarks,
+  };
+
+  return val;
+}

@@ -1,6 +1,6 @@
 "use client";
 // --- React & Next Imports ---
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 // --- Auth & Data Helpers ---
@@ -27,6 +27,7 @@ import { Search, ArrowLeft, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { searchBookmarks } from "../../utils/Frontend/BookmarkHelpers";
 import BookmarkClusterMap from "./BookmarkClusterMap";
+import KnowledgeGapAnalysis from "./KnowledgeGapAnalysis";
 
 // --- Main Page Component ---
 export default function BookmarkPage() {
@@ -44,6 +45,41 @@ export default function BookmarkPage() {
   const [selectedTags, setSelectedTags] = useState([]);
   // TODO: Replace with real fetch
   const [selectedFolderId, setSelectedFolderId] = useState(null);
+
+  // --- Send token to extension on login ---
+  useEffect(() => {
+    const sendTokenToExtension = async () => {
+      if (user) {
+        // Check if we've already sent the token recently
+        const lastTokenSent = localStorage.getItem("extension_token_sent");
+        const halfhourAgo = Date.now() - 30 * 60 * 1000;
+
+        if (lastTokenSent && parseInt(lastTokenSent) > halfhourAgo) {
+          return; // Token was sent recently, no need to send again
+        }
+
+        // Get session from Supabase
+        const { supabase } = await import("../../utils/supabaseClient");
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (session?.access_token) {
+          window.postMessage(
+            {
+              type: "LOGIN_SUCCESS",
+              token: session.access_token,
+            },
+            "http://localhost:3000"
+          );
+
+          localStorage.setItem("extension_token_sent", Date.now().toString());
+        }
+      }
+    };
+
+    sendTokenToExtension();
+  }, [user]);
 
   // --- Data Fetching ---
   const {
@@ -241,6 +277,11 @@ export default function BookmarkPage() {
         )}
         {/* Bookmark Clusters Visualization */}
         <BookmarkClusterMap bookmarks={bookmarks} />
+
+        {/* Knowledge Gap Analysis */}
+        <div className="mt-8 px-4">
+          <KnowledgeGapAnalysis />
+        </div>
       </div>
     </div>
   );

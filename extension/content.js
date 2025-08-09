@@ -1,6 +1,4 @@
 // Content script to bridge communication between webpage and extension
-console.log("Markit extension content script loaded");
-
 // Listen for messages from the webpage
 window.addEventListener("message", (event) => {
   // Only accept messages from same origin

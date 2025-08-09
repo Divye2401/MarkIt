@@ -1,13 +1,14 @@
 "use client";
-
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { supabase } from "../utils/supabaseClient";
 import Lottie from "lottie-react";
-import { motion } from "framer-motion";
 import bookmarkData from "../animations/bookmark.json";
 import catData from "../animations/cat.json";
+import { motion } from "framer-motion";
 
-export default function LoginPage() {
+export default function Login() {
+  const router = useRouter();
   const [error, setError] = useState(null);
 
   const handleLogin = async () => {
@@ -19,7 +20,9 @@ export default function LoginPage() {
           redirectTo: `${process.env.NEXT_PUBLIC_URL}/bookmark`,
         },
       });
-      if (error) setError(error.message);
+      if (error) {
+        setError(error.message);
+      }
     } catch (err) {
       setError("Login failed. Please try again.");
     }

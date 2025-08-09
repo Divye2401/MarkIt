@@ -41,6 +41,7 @@ export async function POST(request) {
     // Check cache first
     const cached = clusterCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      console.log("Returning cached bookmark clusters----------------------");
       return NextResponse.json({ clusters: cached.data });
     }
 
@@ -84,7 +85,7 @@ export async function POST(request) {
       timestamp: Date.now(),
     });
 
-    console.log("labeledClusters", labeledClusters);
+    console.log("Generated new bookmark clusters xxxxxxxxxxxxxxxxxxxxxx");
     return NextResponse.json({ clusters: labeledClusters });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
