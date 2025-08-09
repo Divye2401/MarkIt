@@ -49,8 +49,13 @@ export default function BookmarkPage() {
   const [selectedFolderId, setSelectedFolderId] = useState(null);
   const { theme } = useTheme();
 
-  // --- Send token to extension on login ---
+  // --- Clean URL hash and send token to extension ---
   useEffect(() => {
+    // Clean URL hash (remove access token from URL)
+    if (window.location.hash.includes("access_token")) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
     const sendTokenToExtension = async () => {
       if (user) {
         // Check if we've already sent the token recently

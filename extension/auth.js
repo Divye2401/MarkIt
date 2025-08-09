@@ -27,7 +27,7 @@ export async function checkAuth() {
 
   if (!token) {
     // Open login page in new tab
-    const loginUrl = `${currentConfig.development.appUrl}`;
+    const loginUrl = `${currentConfig.production.appUrl}`;
     console.log("Opening login URL:", loginUrl);
     chrome.tabs.create({ url: loginUrl });
     return false;

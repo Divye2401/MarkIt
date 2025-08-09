@@ -9,7 +9,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["http://localhost:3000/*"],
+      "matches": ["https://markit-cyan.vercel.app/*"],
       "js": ["content.js"]
     }
   ],

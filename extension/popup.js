@@ -88,7 +88,7 @@ async function saveBookmark(type) {
     showStatus("Saving...", "info");
 
     const response = await fetch(
-      `${currentConfig.development.appUrl}/api/magic-save`,
+      `${currentConfig.production.appUrl}/api/magic-save`,
       {
         method: "POST",
         headers: {
@@ -104,7 +104,7 @@ async function saveBookmark(type) {
 
     if (response.status === 401) {
       showStatus("Please login first. A new tab will open for login.", "info");
-      const loginUrl = `${currentConfig.development.appUrl}`;
+      const loginUrl = `${currentConfig.production.appUrl}`;
       chrome.tabs.create({ url: loginUrl });
       return;
     }
