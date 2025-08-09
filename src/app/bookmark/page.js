@@ -49,13 +49,8 @@ export default function BookmarkPage() {
   const [selectedFolderId, setSelectedFolderId] = useState(null);
   const { theme } = useTheme();
 
-  // --- Clean URL hash and send token to extension ---
+  // --- Send token to extension ---
   useEffect(() => {
-    // Clean URL hash (remove access token from URL)
-    if (window.location.hash.includes("access_token")) {
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
     const sendTokenToExtension = async () => {
       if (user) {
         // Check if we've already sent the token recently
@@ -87,6 +82,20 @@ export default function BookmarkPage() {
     };
 
     sendTokenToExtension();
+  }, [user]);
+
+  // --- Clean URL after user is authenticated ---
+  useEffect(() => {
+    if (user && window.location.hash.includes("access_token")) {
+      // Small delay to ensure Supabase has processed the token
+      setTimeout(() => {
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+      }, 200);
+    }
   }, [user]);
 
   // --- Data Fetching ---
