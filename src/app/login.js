@@ -14,7 +14,6 @@ export default function Login() {
   const handleLogin = async () => {
     setError(null);
     try {
-      console.log("Login with Google", process.env.NEXT_PUBLIC_URL);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -28,6 +27,8 @@ export default function Login() {
       setError("Login failed. Please try again.");
     }
   };
+
+  console.log("Login with Google", process.env.NEXT_PUBLIC_URL);
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-background text-center px-4 w-full">
