@@ -55,7 +55,7 @@ export default function BookmarkPage() {
       if (user) {
         // Check if we've already sent the token recently
         const lastTokenSent = localStorage.getItem("extension_token_sent");
-        const halfhourAgo = Date.now() - 30 * 60 * 1000;
+        const halfhourAgo = Date.now() - 5 * 60 * 1000;
 
         if (lastTokenSent && parseInt(lastTokenSent) > halfhourAgo) {
           return; // Token was sent recently, no need to send again
