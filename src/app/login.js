@@ -31,7 +31,16 @@ export default function Login() {
   console.log("Login with Google", process.env.NEXT_PUBLIC_URL);
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-background text-center px-4 w-full">
+    <div
+      className="relative flex flex-col items-center justify-center min-h-screen bg-background text-center w-screen px-0 mx-0"
+      style={{
+        marginLeft: 0,
+        marginRight: 0,
+        paddingLeft: 0,
+        paddingRight: 0,
+        width: "100vw",
+      }}
+    >
       {/* Cat animation in top right */}
       <div className="absolute top-0 right-10 w-24 h-24 z-50 pointer-events-none transform scale-400 origin-top-right">
         <Lottie animationData={catData} loop />

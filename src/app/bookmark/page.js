@@ -75,7 +75,7 @@ export default function BookmarkPage() {
             },
             "https://markit-cyan.vercel.app/"
           );
-
+          console.log("Token sent to extension");
           localStorage.setItem("extension_token_sent", Date.now().toString());
         }
       }
