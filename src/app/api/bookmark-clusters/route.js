@@ -18,7 +18,7 @@ export async function POST(request) {
     const { user, supabase, errorResponse } = await requireAuth(request);
     if (errorResponse) return errorResponse;
 
-    const numClusters = 3;
+    const numClusters = Math.min(10, bookmarks.length);
     // Fetch all bookmarks for this user
     const { data: bookmarks, error } = await supabase
       .from("bookmarks")
