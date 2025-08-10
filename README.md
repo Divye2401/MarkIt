@@ -213,7 +213,7 @@ folders (
 - `POST /api/magic-save` - AI-powered bookmark enrichment
 - `POST /api/semantic-search` - Semantic search with embeddings
 - `GET /api/folder-insights` - AI-generated folder analytics
-- `GET /api/bookmark-clusters` - Content clustering analysis
+- `GET /api/knowledge-gaps` - Find AI Assisted Weakpoints
 
 ### Magic Save Pipeline
 
