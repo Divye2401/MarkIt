@@ -46,7 +46,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`min-h-screen bg-background border-r border-border flex flex-col p-2 transition-all duration-300 ease-in-out ${sidebarWidth}`}
+      className={`min-h-screen bg-surface/70 backdrop-blur-sm ml-4 my-4 mr-2 border border-border/30 rounded-2xl flex flex-col p-4 transition-all duration-300 ease-in-out shadow-lg ${sidebarWidth}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -56,9 +56,11 @@ export default function Sidebar({
         }`}
       >
         {hovered ? (
-          <h2 className="text-heading-sm text-foreground">Folders</h2>
+          <h2 className="text-heading-sm text-foreground font-bold">
+            📁 Folders
+          </h2>
         ) : (
-          <span className="text-heading-sm text-foreground">Folders</span>
+          <span className="text-heading-sm text-foreground">📁</span>
         )}
         {hovered && (
           <div className="flex gap-1">
@@ -67,15 +69,16 @@ export default function Sidebar({
               variant="ghost"
               onClick={() => router.push("/folder")}
               aria-label="Go to Folders"
-              className="bg-primary text-primary-foreground hover:bg-primary-hover"
+              className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground rounded-xl transition-all duration-300 hover:scale-110"
             >
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </Button>
             <Button
               size="icon"
               variant="ghost"
               onClick={() => setShowNewFolderModal(true)}
               aria-label="Add Folder"
+              className="bg-surface-elevated hover:bg-primary/20 text-foreground hover:text-primary rounded-xl transition-all duration-300 hover:scale-110"
             >
               <Plus className="w-5 h-5" />
             </Button>
@@ -86,14 +89,14 @@ export default function Sidebar({
         <ul className="space-y-1">
           <li>
             <button
-              className={`w-full flex items-center gap-2 px-2 py-2 rounded transition font-medium ${
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 font-medium hover:scale-[1.02] ${
                 !selectedFolderId
-                  ? "bg-primary/10 text-primary"
-                  : "hover:bg-surface-elevated text-foreground-secondary"
+                  ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary shadow-md"
+                  : "hover:bg-surface-elevated text-foreground-secondary hover:shadow-sm"
               }`}
               onClick={() => onSelectFolder(null)}
             >
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20 text-primary font-bold">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/30 text-primary font-bold">
                 {hovered ? "★" : "★"}
               </span>
               {hovered && <span className="text-body">All Bookmarks</span>}
@@ -107,14 +110,14 @@ export default function Sidebar({
             folders.map((folder) => (
               <li key={folder.id}>
                 <button
-                  className={`w-full flex items-center gap-2 px-2 py-2 rounded transition font-medium ${
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 font-medium hover:scale-[1.02] ${
                     selectedFolderId === folder.id
-                      ? "bg-primary/10 text-primary"
-                      : "hover:bg-surface-elevated text-foreground-secondary"
+                      ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary shadow-md"
+                      : "hover:bg-surface-elevated text-foreground-secondary hover:shadow-sm"
                   }`}
                   onClick={() => onSelectFolder(folder.id)}
                 >
-                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-surface-elevated text-foreground font-bold text-caption">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-surface-elevated to-surface text-foreground font-bold text-caption shadow-sm">
                     {folder.name.slice(0, 2).toUpperCase()}
                   </span>
                   {hovered && (
@@ -135,32 +138,32 @@ export default function Sidebar({
       </nav>
       {/* New Folder Modal */}
       <Dialog open={showNewFolderModal} onOpenChange={setShowNewFolderModal}>
-        <DialogContent className="bg-surface-elevated text-foreground border border-border">
+        <DialogContent className="bg-surface/95 backdrop-blur-sm text-foreground border border-border/50 rounded-2xl shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-heading-md">
-              Create New Folder
+            <DialogTitle className="text-heading-md font-bold text-primary">
+              📁 Create New Folder
             </DialogTitle>
           </DialogHeader>
           <input
             type="text"
-            className="px-3 py-2 rounded border border-border bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary mb-2"
+            className="px-4 py-3 rounded-xl border border-border/50 bg-surface-elevated/50 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary mb-4 transition-all duration-300"
             placeholder="Folder name"
             value={newFolderName}
             onChange={(e) => setNewFolderName(e.target.value)}
           />
           <textarea
-            className="px-3 py-2 rounded border border-border bg-surface text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary mb-2"
+            className="px-4 py-3 rounded-xl border border-border/50 bg-surface-elevated/50 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary mb-4 transition-all duration-300"
             placeholder="Description (optional)"
             value={newFolderDescription}
             onChange={(e) => setNewFolderDescription(e.target.value)}
             rows={2}
           />
-          <div className="flex gap-2 justify-end">
+          <div className="flex gap-3 justify-end">
             <Button
               variant="default"
               onClick={handleCreateFolder}
               disabled={!newFolderName.trim()}
-              className="transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg"
+              className="transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-lg bg-gradient-to-r from-primary to-primary-hover rounded-xl px-6"
             >
               Save
             </Button>
@@ -171,6 +174,7 @@ export default function Sidebar({
                 setNewFolderName("");
                 setNewFolderDescription("");
               }}
+              className="rounded-xl px-6 transition-all duration-300 hover:scale-105"
             >
               Cancel
             </Button>

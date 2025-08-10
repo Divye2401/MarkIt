@@ -18,13 +18,25 @@ export async function POST(request) {
     const { user, supabase, errorResponse } = await requireAuth(request);
     if (errorResponse) return errorResponse;
 
-    const numClusters = Math.min(10, bookmarks.length);
     // Fetch all bookmarks for this user
     const { data: bookmarks, error } = await supabase
       .from("bookmarks")
       .select("id, embedding, url, title, summary, tags")
       .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
       .not("embedding", "is", null);
+
+    let numClusters;
+    if (bookmarks.length <= 5) {
+      numClusters = 3;
+    } else if (bookmarks.length > 5 && bookmarks.length <= 10) {
+      numClusters = 7;
+    } else if (bookmarks.length > 10 && bookmarks.length <= 15) {
+      numClusters = 10;
+    } else if (bookmarks.length > 15 && bookmarks.length <= 20) {
+      numClusters = 12;
+    } else {
+      numClusters = 15;
+    }
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -45,6 +57,7 @@ export async function POST(request) {
       return NextResponse.json({ clusters: cached.data });
     }
 
+    console.log("Not in cache");
     // Prepare data for clustering
     const vectors = bookmarks.map((b) => b.embedding);
     // Run K-means clustering
@@ -78,6 +91,8 @@ export async function POST(request) {
         bookmarks: cluster.filter((_, i) => i % 2 !== 0),
       });
     }
+
+    console.log("labeledClusters", labeledClusters);
 
     // Cache the result
     clusterCache.set(cacheKey, {

@@ -1,15 +1,9 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBookmarkClusters } from "@/utils/Frontend/BookmarkHelpers";
-import { useMemo } from "react";
-import { createPoints } from "./[id]/createPoints";
-import h337 from "heatmap.js";
 import { useTheme } from "@/utils/Providers/ThemeProvider";
 
 export default function BookmarkClusterMap({ bookmarks }) {
-  const heatmapRef = useRef(null);
-  const containerRef = useRef(null);
-  const [labelPositions, setLabelPositions] = useState([]);
   const { theme } = useTheme();
 
   // Calculate content type stats
@@ -48,65 +42,6 @@ export default function BookmarkClusterMap({ bookmarks }) {
     enabled: bookmarks.length > 0,
     refetchOnWindowFocus: false,
   });
-
-  const updateHeatmap = () => {
-    if (!containerRef.current || !data?.clusters) return;
-
-    // Get container dimensions
-    const width = containerRef.current.offsetWidth;
-    const height = containerRef.current.offsetHeight;
-
-    if (!width || !height) return; // Don't create heatmap if container not sized
-
-    // Clear previous heatmap instance
-    if (heatmapRef.current) {
-      heatmapRef.current.setData({ data: [] });
-    }
-
-    // Create heatmap instance with theme-based colors
-    const gradient =
-      theme === "light"
-        ? {
-            ".2": "#3b82f6", // Blue for light mode
-            ".4": "#1d4ed8", // Darker blue
-            ".6": "#1e40af", // Even darker blue
-            ".8": "#1e3a8a", // Navy blue
-            1: "#1e293b", // Dark slate
-          }
-        : {
-            ".2": "#4f46e5", // Primary color - low intensity
-            ".4": "#6366f1", // Primary bright
-            ".6": "#8b5cf6", // AI accent
-            ".8": "#a855f7", // Purple
-            1: "#c026d3", // Magenta - high intensity
-          };
-
-    heatmapRef.current = h337.create({
-      container: containerRef.current,
-      radius: Math.min(width, height) * 0.9, // Smaller, more defined clusters
-      maxOpacity: 0.8,
-      minOpacity: 0.3,
-      blur: 0.2, // Much less blur for crisp edges
-      gradient,
-    });
-
-    const max = Math.max(...data.clusters.map((c) => c.bookmarks.length));
-    const points = createPoints(max, data, width, height);
-
-    // Set data for heatmap
-    heatmapRef.current.setData({
-      max,
-      data: points,
-    });
-
-    // Save label positions for overlay
-    setLabelPositions(points.filter((p) => p.label));
-  };
-
-  useEffect(() => {
-    updateHeatmap();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.clusters, theme]);
 
   if (isLoading)
     return (
@@ -178,44 +113,125 @@ export default function BookmarkClusterMap({ bookmarks }) {
             Cluster Distribution
           </h3>
           <div
-            className={`w-full h-[300px] sm:h-[400px] rounded-lg overflow-hidden relative border-2 border-border shadow-sm ${
-              theme === "light" ? "bg-gray-100" : "bg-surface"
+            className={`w-full h-[400px] rounded-lg overflow-hidden relative border-2 border-border shadow-sm ${
+              theme === "light"
+                ? "bg-gradient-to-br from-slate-50 to-blue-50"
+                : "bg-gradient-to-br from-slate-900 to-blue-900"
             }`}
-            style={{ height: "400px", minHeight: "400px" }}
           >
-            <div
-              ref={containerRef}
+            <svg
               className="w-full h-full"
-              style={{ width: "100%", height: "100%" }}
-            />
-            {labelPositions.map((pt, idx) => (
-              <div
-                className="absolute w-16 h-16 cursor-pointer hover:bg-white/1 group"
-                key={idx}
-                style={{
-                  left: pt.x,
-                  top: pt.y,
-                  transform: "translate(-50%, -50%)",
-                }}
-              >
-                <div
-                  className="hidden group-hover:block absolute bg-white/90 px-2 py-1 rounded shadow-lg"
-                  style={{
-                    left: "50%",
-                    top: "50%",
-                    transform: "translate(-50%, -50%)",
-                    color: "#222",
-                    fontWeight: "bold",
-                    fontSize: 10,
-                    textShadow: "0 1px 4px #fff, 0 0 8px #fff",
-                    whiteSpace: "nowrap",
-                    textAlign: "center",
-                  }}
+              viewBox="0 0 600 400"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              {/* Background grid for reference */}
+              <defs>
+                <pattern
+                  id="grid"
+                  width="30"
+                  height="30"
+                  patternUnits="userSpaceOnUse"
                 >
-                  <div>{pt.label}</div>
-                </div>
-              </div>
-            ))}
+                  <path
+                    d="M 30 0 L 0 0 0 30"
+                    fill="none"
+                    stroke={theme === "light" ? "#e2e8f0" : "#334155"}
+                    strokeWidth="0.5"
+                    opacity="0.5"
+                  />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+
+              {/* Render clusters as clean circles */}
+              {data?.clusters?.map((cluster, idx) => {
+                const colors = [
+                  "#3b82f6",
+                  "#10b981",
+                  "#f59e0b",
+                  "#ef4444",
+                  "#8b5cf6",
+                  "#06b6d4",
+                  "#f97316",
+                  "#84cc16",
+                  "#ec4899",
+                  "#6366f1",
+                ];
+                const color = colors[idx % colors.length];
+
+                // Calculate truly random position for each cluster
+                const maxBookmarks = Math.max(
+                  ...data.clusters.map((c) => c.bookmarks.length)
+                );
+
+                // Generate truly random positions (different each time)
+                const normalizedX = Math.random();
+                const normalizedY = Math.random();
+                const sizeVariation = Math.random() * 0.6; // 30% variation
+
+                // Add some organic size variation while keeping proportional to bookmark count
+                const baseRadius =
+                  10 + (cluster.bookmarks.length / maxBookmarks) * 25; // Smaller base: 10-35px instead of 20-60px
+                const finalRadius = baseRadius + sizeVariation * 8; // Smaller variation: ±8px instead of ±15px
+
+                // Calculate position with much wider scatter and minimal padding
+                const padding = 25; // Much smaller padding for wider distribution
+                const x = padding + Math.abs(normalizedX) * (600 - 2 * padding);
+                const y = padding + Math.abs(normalizedY) * (400 - 2 * padding);
+
+                return (
+                  <g key={idx}>
+                    {/* Outer glow */}
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r={finalRadius + 5}
+                      fill={color}
+                      opacity="0.15"
+                      className="animate-pulse"
+                    />
+                    {/* Main circle */}
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r={finalRadius}
+                      fill={color}
+                      opacity="0.8"
+                      stroke="white"
+                      strokeWidth="2"
+                      className="hover:opacity-100 transition-opacity cursor-pointer"
+                      onClick={() => {
+                        const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(
+                          cluster.label
+                        )}`;
+                        window.open(googleUrl, "_blank", "noopener,noreferrer");
+                      }}
+                    />
+                    {/* Center dot */}
+                    <circle cx={x} cy={y} r="2" fill="white" opacity="0.9" />
+                    {/* Label */}
+                    <text
+                      x={x}
+                      y={y + finalRadius + 15}
+                      textAnchor="middle"
+                      className="text-xs font-medium fill-current text-foreground"
+                      style={{ fontSize: "9px" }}
+                    >
+                      {cluster.label}
+                    </text>
+                    <text
+                      x={x}
+                      y={y + finalRadius + 28}
+                      textAnchor="middle"
+                      className="text-xs fill-current text-foreground-secondary"
+                      style={{ fontSize: "8px" }}
+                    >
+                      {cluster.bookmarks.length} items
+                    </text>
+                  </g>
+                );
+              })}
+            </svg>
           </div>
         </div>
 
