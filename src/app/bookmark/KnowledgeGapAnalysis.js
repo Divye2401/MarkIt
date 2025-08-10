@@ -15,8 +15,9 @@ import {
   RefreshCw,
 } from "lucide-react";
 
-export default function KnowledgeGapAnalysis() {
+export default function KnowledgeGapAnalysis({ bookmarks }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const bookmarkIds = bookmarks.map((b) => b.id);
 
   const {
     data: analysis,
@@ -25,8 +26,8 @@ export default function KnowledgeGapAnalysis() {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: ["knowledge-gaps"],
-    queryFn: fetchKnowledgeGaps,
+    queryKey: ["knowledge-gaps", bookmarkIds],
+    queryFn: () => fetchKnowledgeGaps(bookmarkIds),
     staleTime: 10 * 60 * 1000, // 10 minutes
     cacheTime: 30 * 60 * 1000, // 30 minutes
     refetchOnWindowFocus: false,

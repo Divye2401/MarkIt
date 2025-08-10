@@ -32,7 +32,7 @@ export default function FolderBarChart({ bookmarks }) {
   const hasData = data.some((bucket) => bucket.count > 0);
   return (
     <div className="w-full">
-      <h4 className="text-heading-sm text-surface mb-2 text-center">
+      <h4 className="text-heading-sm text-foreground mb-2 text-center">
         Reading Time Distribution
       </h4>
       {hasData ? (

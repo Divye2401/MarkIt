@@ -25,7 +25,7 @@ export default function FolderTimeline({ bookmarks }) {
 
   return (
     <div className="w-[80%]">
-      <h4 className="text-heading-sm text-surface mb-2 text-center">
+      <h4 className="text-heading-sm text-foreground mb-2 text-center">
         Bookmark Activity
       </h4>
       <CalendarHeatmap

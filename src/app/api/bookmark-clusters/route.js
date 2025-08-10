@@ -17,16 +17,20 @@ export async function POST(request) {
   try {
     const { user, supabase, errorResponse } = await requireAuth(request);
     if (errorResponse) return errorResponse;
-
+    const { bookmarkIds } = await request.json();
     // Fetch all bookmarks for this user
     const { data: bookmarks, error } = await supabase
       .from("bookmarks")
       .select("id, embedding, url, title, summary, tags")
       .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
-      .not("embedding", "is", null);
+      .not("embedding", "is", null)
+      .in("id", bookmarkIds); //only fetch bookmarks that are in the list
 
     let numClusters;
-    if (bookmarks.length <= 5) {
+
+    if (bookmarks.length <= 3) {
+      numClusters = bookmarks.length;
+    } else if (bookmarks.length > 3 && bookmarks.length <= 5) {
       numClusters = 3;
     } else if (bookmarks.length > 5 && bookmarks.length <= 10) {
       numClusters = 7;
@@ -91,8 +95,6 @@ export async function POST(request) {
         bookmarks: cluster.filter((_, i) => i % 2 !== 0),
       });
     }
-
-    console.log("labeledClusters", labeledClusters);
 
     // Cache the result
     clusterCache.set(cacheKey, {

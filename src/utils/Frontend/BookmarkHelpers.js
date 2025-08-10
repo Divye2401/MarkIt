@@ -164,7 +164,8 @@ export async function fetchBookmarksByIds(bookmarkIds) {
   return data;
 }
 
-export async function fetchBookmarkClusters() {
+export async function fetchBookmarkClusters(bookmarks) {
+  const bookmarkIds = bookmarks.map((b) => b.id);
   const accessToken = await getAccessToken();
   const res = await fetch("/api/bookmark-clusters", {
     method: "POST",
@@ -172,9 +173,10 @@ export async function fetchBookmarkClusters() {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessToken}`,
     },
+    body: JSON.stringify({ bookmarkIds }),
   });
   if (!res.ok) throw new Error("Failed to fetch clusters");
   const finalresult = await res.json();
-  console.log("data", finalresult);
+
   return finalresult;
 }

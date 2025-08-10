@@ -13,17 +13,20 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const knowledgeCache = new Map();
 const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes
 
-export async function GET(request) {
+export async function POST(request) {
   try {
     const { user, supabase, errorResponse } = await requireAuth(request);
     if (errorResponse) return errorResponse;
+
+    const { bookmarkIds } = await request.json();
 
     // Get all user's bookmarks with tags and summaries
     const { data: bookmarks, error } = await supabase
       .from("bookmarks")
       .select("tags, summary, title")
       .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
-      .not("tags", "is", null);
+      .not("tags", "is", null)
+      .in("id", bookmarkIds);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

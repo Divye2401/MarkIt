@@ -1,15 +1,16 @@
 // Helper functiimons for knowledge gap analysis
 import { getAccessToken } from "../Providers/AuthHelpers";
 
-export async function fetchKnowledgeGaps() {
+export async function fetchKnowledgeGaps(bookmarkIds) {
   try {
     const accessToken = await getAccessToken();
     const response = await fetch("/api/knowledge-gaps", {
-      method: "GET",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
+      body: JSON.stringify({ bookmarkIds }),
     });
 
     if (!response.ok) {

@@ -36,9 +36,15 @@ export default function BookmarkClusterMap({ bookmarks }) {
     return results;
   }, [bookmarks]);
 
+  // Create a dynamic query key based on the actual bookmarks
+  const bookmarkIds = bookmarks
+    .map((b) => b.id)
+    .sort()
+    .join(",");
+
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["bookmark-clusters"],
-    queryFn: fetchBookmarkClusters,
+    queryKey: ["bookmark-clusters", bookmarkIds],
+    queryFn: () => fetchBookmarkClusters(bookmarks),
     enabled: bookmarks.length > 0,
     refetchOnWindowFocus: false,
   });
