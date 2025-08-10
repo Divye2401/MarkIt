@@ -73,7 +73,7 @@ export default function BookmarkPage() {
               type: "LOGIN_SUCCESS",
               token: session.access_token,
             },
-            "https://markit.vercel.app"
+            "https://markit-cyan.vercel.app/"
           );
           console.log("Token sent to extension");
           localStorage.setItem("extension_token_sent", Date.now().toString());
