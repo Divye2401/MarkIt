@@ -1,6 +1,7 @@
 # 🔖 Markit - AI-Powered Bookmark Manager
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-blue)](https://markit-cyan.vercel.app)
+![Extension](https://chromewebstore.google.com/detail/markit-extension)
 [![Next.js](https://img.shields.io/badge/Next.js-14-black)](https://nextjs.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-green)](https://supabase.com/)
 [![OpenAI](https://img.shields.io/badge/OpenAI-GPT--3.5-orange)](https://openai.com/)
