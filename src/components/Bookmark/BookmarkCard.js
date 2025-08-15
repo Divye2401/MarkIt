@@ -267,7 +267,7 @@ export default function BookmarkCard({ bookmark, refresh }) {
 
           opacity: hovered ? 0.98 : 0,
           transform: hovered ? "translateY(0)" : "translateY(100%)",
-          transition: "all 0.3s ease-out",
+          transition: "all 0.4s ease-out",
           zIndex: 10,
         }}
       >
