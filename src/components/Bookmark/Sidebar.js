@@ -46,7 +46,7 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`min-h-screen bg-surface/70 ml-4 my-4 mr-2 border border-border/30 rounded-2xl flex flex-col p-4 transition-all duration-100 ease-in-out shadow-lg ${sidebarWidth}`}
+      className={`min-h-screen bg-surface/70 ml-4 my-4 mr-2 border border-border/30 rounded-2xl flex flex-col p-4 transition-all duration-200 ease-in-out shadow-lg ${sidebarWidth}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
