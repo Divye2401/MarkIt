@@ -133,7 +133,7 @@ export default function BookmarkCard({ bookmark, refresh }) {
   // --- Render ---
   return (
     <Card
-      className={`relative min-h-[120px] border border-border/50 overflow-hidden transition-all duration-300 cursor-pointer rounded-2xl shadow-sm hover:shadow-md  ${
+      className={`relative min-h-[120px] border border-border/50 overflow-hidden transition-all duration-400 ease-out cursor-pointer rounded-2xl  ${
         hovered ? "bg-surface-elevated" : "bg-surface"
       }`}
       onMouseEnter={() => setHovered(true)}
@@ -264,10 +264,10 @@ export default function BookmarkCard({ bookmark, refresh }) {
         className="absolute left-0 right-0 bottom-0 pointer-events-none"
         style={{
           background: "var(--color-surface)",
-          boxShadow: "0 -2px 16px rgba(0,0,0,0.08)",
+
           opacity: hovered ? 0.98 : 0,
           transform: hovered ? "translateY(0)" : "translateY(100%)",
-          transition: "all 0.3s",
+          transition: "all 0.3s ease-out",
           zIndex: 10,
         }}
       >
