@@ -25,7 +25,7 @@ import TagFilter from "../../components/Bookmark/TagFilter";
 import SearchResultsDialog from "../../components/Bookmark/SearchResultsDialog";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
-import { Search, ArrowLeft, ArrowRight } from "lucide-react";
+import { Search, ArrowLeft, ArrowRight, Loader } from "lucide-react";
 import { toast } from "sonner";
 import { searchBookmarks } from "../../utils/Frontend/BookmarkHelpers";
 import BookmarkClusterMap from "./BookmarkClusterMap";
@@ -45,6 +45,7 @@ export default function BookmarkPage() {
   const [searchResults, setSearchResults] = useState(null);
   const [addingId, setAddingId] = useState(null);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
   // TODO: Replace with real fetch
   const [selectedFolderId, setSelectedFolderId] = useState(null);
   const { theme } = useTheme();
@@ -136,14 +137,25 @@ export default function BookmarkPage() {
   // --- Search Handler ---
   const handleSearch = async () => {
     if (searchValue.trim().length >= 8) {
-      const result = await searchBookmarks(searchValue.trim());
-      setSearchResults(result);
-      setSearchModalOpen(true);
+      const toastId = toast.loading("Searching bookmarks...");
+      setIsSearchLoading(true);
+      try {
+        const result = await searchBookmarks(searchValue.trim());
+        toast.success("Search completed", { id: toastId });
+        setSearchResults(result);
+        setSearchModalOpen(true);
+      } catch (error) {
+        console.error("Error searching bookmarks:", error);
+        toast.error("Error searching bookmarks", { id: toastId });
+      } finally {
+        setIsSearchLoading(false);
+      }
     }
   };
 
   // --- Add Suggested Link Handler ---
   const handleAddSuggested = async (link) => {
+    const toastId = toast.loading("Adding bookmark to your collection...");
     setAddingId(link.url);
     await handleAddBookmark(link.url);
     setAddingId(null);
@@ -152,6 +164,7 @@ export default function BookmarkPage() {
       suggestedLinks: prev.suggestedLinks.filter((l) => l.url !== link.url),
     }));
     queryClient.invalidateQueries({ queryKey: ["bookmarks"] });
+    toast.success("Bookmark added to your collection", { id: toastId });
   };
 
   // --- Filtering Logic ---
@@ -262,9 +275,15 @@ export default function BookmarkPage() {
                     <Button
                       onClick={handleSearch}
                       className="scale-100 px-8 py-2 rounded-full bg-primary text-primary-foreground hover:bg-primary-hover hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 font-semibold text-lg ml-2"
-                      disabled={searchValue.trim().length < 8}
+                      disabled={
+                        searchValue.trim().length < 8 || isSearchLoading
+                      }
                     >
-                      Search
+                      {isSearchLoading ? (
+                        <Loader className="animate-spin" />
+                      ) : (
+                        "Search"
+                      )}
                     </Button>
                     <AddBookmarkButton onClick={() => setShowInput(true)} />
                   </div>
