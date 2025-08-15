@@ -221,6 +221,20 @@ folders (
   doc_count INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT NOW()
 )
+
+
+research_projects (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL,
+  thesis_statement TEXT NOT NULL,
+  due_date DATE,
+  required_sources INTEGER DEFAULT 10,
+  subject_area TEXT,
+  description TEXT,
+  bookmark_ids UUID[] DEFAULT '{}',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 ```
 
 ## 🔧 API Endpoints
