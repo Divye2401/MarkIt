@@ -29,7 +29,7 @@ export async function fetchKnowledgeGaps(bookmarkIds) {
 export function getPriorityColor(priority) {
   switch (priority) {
     case "high":
-      return "text-error bg-error/10 border-error/60";
+      return "text-error bg-red-400/10 border-error/60";
     case "medium":
       return "text-warning bg-warning/10 border-warning/60";
     case "low":

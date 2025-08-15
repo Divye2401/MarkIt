@@ -30,7 +30,7 @@ export default function TagFilter({ bookmarks, selectedTags, onTagSelect }) {
         <input
           type="text"
           placeholder="Filter by tag..."
-          className="w-full px-4 py-2 rounded-lg border border-border bg-surface text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 transition text-body placeholder:text-foreground-muted"
+          className="w-full px-4 py-2 rounded-lg border border-border dark:border-2 dark:border-white da bg-surface text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary dark:focus-visible:ring-white dark:focus-visible:border-white  transition text-body placeholder:text-foreground-muted"
           value={tagQuery}
           onChange={(e) => {
             setTagQuery(e.target.value);

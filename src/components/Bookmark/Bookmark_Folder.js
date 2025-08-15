@@ -88,7 +88,7 @@ export default function Bookmark_Folder({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="bg-gray-100 text-gray-900 border border-yellow-200"
+        className="bg-surface text-gray-900 dark:text-white border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         <DialogHeader>

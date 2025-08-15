@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { Plus, ArrowRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchFolders, createFolder } from "../../utils/Frontend/FolderHelpers";
+import { fetchResearchProjects } from "../../utils/Frontend/ResearchHelpers";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -13,7 +14,7 @@ export default function Sidebar({
   onSelectFolder = () => {},
 }) {
   const [hovered, setHovered] = useState(false);
-  const sidebarWidth = hovered ? "w-64" : "w-20";
+  const sidebarWidth = hovered ? "w-64" : "w-30";
   const [showNewFolderModal, setShowNewFolderModal] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [newFolderDescription, setNewFolderDescription] = useState("");
@@ -27,6 +28,12 @@ export default function Sidebar({
     queryKey: ["folders-sidebar"],
     queryFn: fetchFolders,
   });
+
+  const { data: researchProjects = [], isLoading: isLoadingResearch } =
+    useQuery({
+      queryKey: ["research-projects-sidebar"],
+      queryFn: fetchResearchProjects,
+    });
 
   async function handleCreateFolder() {
     try {
@@ -46,12 +53,12 @@ export default function Sidebar({
 
   return (
     <aside
-      className={`min-h-screen bg-surface/70 ml-4 my-4 mr-2 border border-border/30 rounded-2xl flex flex-col p-4 transition-all duration-300 ease-out shadow-lg ${sidebarWidth}`}
+      className={`min-h-screen hidden md:flex bg-background ml-4 my-4 mr-2 border border-border/30 rounded-2xl flex-col p-4 transition-all duration-400 ease-in-out shadow-lg dark:border-r-3 dark:border-r-white ${sidebarWidth}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       <div
-        className={`flex items-center justify-between mb-2 ${
+        className={`flex items-center justify-between mb-2 transition-all duration-400 ease-in-out ${
           hovered ? "px-2" : "px-0"
         }`}
       >
@@ -89,7 +96,7 @@ export default function Sidebar({
         <ul className="space-y-1">
           <li>
             <button
-              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 font-medium hover:scale-[1.02] ${
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 ease-in-out font-medium hover:scale-[1.02] ${
                 !selectedFolderId
                   ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary shadow-md"
                   : "hover:bg-surface-elevated text-foreground-secondary hover:shadow-sm"
@@ -110,14 +117,18 @@ export default function Sidebar({
             folders.map((folder) => (
               <li key={folder.id}>
                 <button
-                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 font-medium hover:scale-[1.02] ${
+                  className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-400 ease-in-out font-medium hover:scale-[1.02] ${
                     selectedFolderId === folder.id
                       ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary shadow-md"
                       : "hover:bg-surface-elevated text-foreground-secondary hover:shadow-sm"
                   }`}
                   onClick={() => onSelectFolder(folder.id)}
                 >
-                  <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-surface-elevated to-surface text-foreground font-bold text-caption shadow-sm">
+                  <span
+                    className={`flex items-center justify-center ${
+                      hovered ? "w-20 h-8" : "w-20 h-8"
+                    } rounded-xl bg-gradient-to-br from-surface-elevated to-surface text-foreground font-bold text-caption shadow-sm dark:text-white`}
+                  >
                     {folder.name.slice(0, 2).toUpperCase()}
                   </span>
                   {hovered && (
@@ -128,6 +139,86 @@ export default function Sidebar({
                           {folder.count}
                         </span>
                       )}
+                    </>
+                  )}
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+
+        {/* Divider */}
+        <div className="my-4 border-t border-border/30"></div>
+
+        {/* Research Projects Section */}
+        <div
+          className={`mb-4 transition-all duration-400 ease-in-out ${
+            hovered ? "px-2" : "px-0"
+          }`}
+        >
+          {hovered ? (
+            <div className="flex items-center justify-between">
+              <h3 className="text-heading-sm text-foreground font-bold">
+                🔬 Research
+              </h3>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => router.push("/research")}
+                aria-label="Go to Research Hub"
+                className="bg-purple-500/20 text-purple-400 hover:bg-purple-500 hover:text-white rounded-xl transition-all duration-300 hover:scale-110"
+              >
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => router.push("/research")}
+                aria-label="Add Folder"
+                className="bg-surface-elevated hover:bg-primary/20 text-foreground hover:text-primary rounded-xl transition-all duration-300 hover:scale-110"
+              >
+                <Plus className="w-5 h-5" />
+              </Button>
+            </div>
+          ) : (
+            <span className="text-heading-sm text-foreground">🔬</span>
+          )}
+        </div>
+
+        <ul className="space-y-1">
+          {isLoadingResearch ? (
+            <li className="text-body-sm text-foreground-muted px-2 py-2">
+              Loading research...
+            </li>
+          ) : researchProjects.length === 0 ? (
+            hovered && (
+              <li className="text-body-sm text-foreground-muted px-2 py-2">
+                No research projects yet
+              </li>
+            )
+          ) : (
+            researchProjects.slice(0, 5).map((project) => (
+              <li key={project.id}>
+                <button
+                  className="w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-400 ease-in-out font-medium hover:scale-[1.02] hover:bg-surface-elevated text-foreground-secondary hover:shadow-sm"
+                  onClick={() => router.push(`/research/${project.id}`)}
+                >
+                  <span
+                    className={`flex items-center justify-center ${
+                      hovered ? "min-w-20 h-8" : "min w-20 h-8"
+                    } rounded-xl bg-gradient-to-br from-purple-500/20 to-indigo-500/20 text-purple-400 font-bold text-caption shadow-sm dark:text-white`}
+                  >
+                    {project.thesis_statement?.slice(0, 2).toUpperCase() ||
+                      "RP"}
+                  </span>
+                  {hovered && (
+                    <>
+                      <span className="truncate text-body">
+                        {project.thesis_statement || "Untitled Research"}
+                      </span>
+                      <span className="ml-auto text-caption text-foreground-muted">
+                        {project.bookmark_ids?.length || 0}
+                      </span>
                     </>
                   )}
                 </button>

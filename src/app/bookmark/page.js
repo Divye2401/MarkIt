@@ -202,10 +202,8 @@ export default function BookmarkPage() {
   // --- Loading & Auth States ---
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-background">
-        <div className="text-heading-md text-foreground-secondary">
-          Loading...
-        </div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
+        <div className="text-heading-md text-zinc-400">Loading...</div>
       </div>
     );
   }
@@ -215,26 +213,21 @@ export default function BookmarkPage() {
 
   // --- Main Render ---
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
       {/* Main Layout Container */}
-      <div className="flex">
+      <div className="flex bg-background  ">
         {/* Sidebar */}
         <Sidebar
           selectedFolderId={selectedFolderId}
           onSelectFolder={setSelectedFolderId}
         />
         {/* Main content */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative px-5">
           {/* Background image with overlay */}
-          {theme === "dark" && (
-            <div className="absolute inset-0 z-0">
-              <img
-                src="https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80"
-                alt="background"
-                className="w-full h-full object-cover opacity-30"
-              />
-              <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/80 to-zinc-800/60" />
-            </div>
+          {theme === "dark" ? (
+            <div className="absolute inset-0 z-0 bg-background"></div>
+          ) : (
+            <div className="absolute inset-0 z-0 bg-background"></div>
           )}
 
           <div className="relative z-10">
@@ -244,10 +237,10 @@ export default function BookmarkPage() {
               onLogout={onLogout}
             />
             {bookmarks.length > 0 && (
-              <div className="w-full px-4 mt-8 mb-6">
+              <div className="w-full px-4 mt-4 mb-4">
                 <div className="flex flex-col md:flex-row items-end gap-4 w-full">
                   {/* Tag Filter */}
-                  <div className="w-full md:w-1/3 flex items-end gap-2">
+                  <div className="w-full md:w-1/3 flex items-end gap-2 ">
                     <TagFilter
                       bookmarks={bookmarks}
                       selectedTags={selectedTags}
@@ -260,21 +253,18 @@ export default function BookmarkPage() {
                       <Input
                         type="text"
                         placeholder="Search through your documents..."
-                        className="pl-12 pr-4 py-5 w-full rounded-full bg-surface/80 backdrop-blur-md \
-                             border border-border shadow-sm focus:border-primary \
-                             focus:ring-2 focus:ring-primary/20 transition-all duration-300\
-                             placeholder:text-foreground-muted hover:shadow-md"
+                        className="pl-10 pr-4 py-3 w-full rounded-lg bg-background border-2 border-zinc-600 dark:border-white focus-visible:outline-none focus-visible:border-blue-500 focus-visible:ring-1 focus-visible:ring-blue-500/20 dark:focus-visible:ring-white dark:focus-visible:border-white transition-all placeholder:text-zinc-400 text-zinc-200"
                         value={searchValue}
                         onChange={(e) => setSearchValue(e.target.value)}
                       />
                       <Search
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground-muted"
-                        size={20}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
+                        size={18}
                       />
                     </div>
                     <Button
                       onClick={handleSearch}
-                      className="scale-100 px-8 py-2 rounded-full bg-primary text-primary-foreground hover:bg-primary-hover hover:shadow-lg transition-all duration-300 hover:scale-105 active:scale-95 font-semibold text-lg ml-2"
+                      className="px-6 py-3 rounded-lg bg-button text-white hover:bg-button/80 transition-all font-medium ml-2"
                       disabled={
                         searchValue.trim().length < 8 || isSearchLoading
                       }
@@ -286,6 +276,12 @@ export default function BookmarkPage() {
                       )}
                     </Button>
                     <AddBookmarkButton onClick={() => setShowInput(true)} />
+                    <Button
+                      onClick={() => router.push("/research")}
+                      className="px-4 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:from-purple-600 hover:to-indigo-700 transition-all font-medium text-sm"
+                    >
+                      Research Section
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -308,12 +304,12 @@ export default function BookmarkPage() {
             {/* Bookmarks Grid */}
             {bookmarksLoading ? (
               <div className="text-center py-8">
-                <div className="text-body text-foreground-secondary">
+                <div className="text-body text-zinc-400">
                   Loading bookmarks...
                 </div>
               </div>
             ) : (
-              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-start px-4">
+              <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start px-4">
                 {sortedBookmarks.map((b) => (
                   <BookmarkCard
                     key={b.id}
@@ -327,12 +323,12 @@ export default function BookmarkPage() {
               </div>
             )}
             {/* Bookmark Clusters Visualization */}
-            <div className="px-4">
+            <div className="px-4 mt-6">
               <BookmarkClusterMap bookmarks={sortedBookmarks} />
             </div>
 
             {/* Knowledge Gap Analysis */}
-            <div className="mt-8 px-4">
+            <div className="mt-6 px-4">
               <KnowledgeGapAnalysis bookmarks={sortedBookmarks} />
             </div>
           </div>

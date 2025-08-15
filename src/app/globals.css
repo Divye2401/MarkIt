@@ -33,6 +33,7 @@
   --color-warning: var(--warning);
   --color-error: var(--error);
   --color-ai-accent: var(--ai-accent);
+  --color-button: var(--button-color);
 
   /* Legacy compatibility */
   --color-card: var(--card);
@@ -70,6 +71,7 @@
   --background: #e8ecff; /* Brighter purple-blue background */
   --surface: #f0f4ff; /* High contrast blue-white surface */
   --surface-elevated: #ffffff; /* Pure white for maximum pop */
+  --button-color: rgb(35, 53, 174);
 
   --foreground: oklch(0.224 0.008 253.894); /* #1f2937 - Primary text */
   --foreground-secondary: oklch(
@@ -125,9 +127,10 @@
 
 .dark {
   /* Dark Theme - Markit Design System - Inspired by rich dark UI */
-  --background: #1e1e1e; /* Deep blue-black */
-  --surface: #1e2328; /* Blue-tinted surface */
-  --surface-elevated: #2a3138; /* Lighter blue-gray */
+  --background: #18181b; /* zinc-900 */
+  --surface: #18181b; /* zinc-900 */
+  --surface-elevated: #27272a; /* zinc-800 */
+  --button-color: rgb(133, 12, 133);
 
   --foreground: oklch(0.963 0.006 229.847); /* #f1f5f9 - Light slate text */
   --foreground-secondary: oklch(
@@ -141,10 +144,8 @@
   --primary-hover: oklch(0.488 0.194 264.376); /* #4f46e5 - Darker hover */
   --primary-foreground: oklch(1 0 0); /* #ffffff - White text on primary */
 
-  --border: oklch(0.294 0.022 229.847); /* #334155 - Dark border */
-  --border-light: oklch(
-    0.363 0.024 229.847
-  ); /* #475569 - Lighter dark border */
+  --border: rgba(63, 63, 70, 0.4); /* Zinc-700 with opacity */
+  --border-light: rgba(82, 82, 91, 0.6); /* Zinc-600 with opacity */
 
   /* Accent Colors (slightly adjusted for dark theme) */
   --success: oklch(0.699 0.157 166.11); /* #10b981 - Success green */
@@ -259,6 +260,19 @@
 
   .text-code {
     @apply font-mono text-sm bg-surface px-1 py-0.5 rounded;
+  }
+
+  /* Utility Card Classes - Dark Theme Inspired by bookmark/id */
+  .card-subtle {
+    @apply bg-zinc-800 border border-zinc-600/40 rounded-lg text-zinc-200 hover:bg-zinc-900 focus:ring-2 focus:ring-blue-500 transition-all duration-300 shadow-sm;
+  }
+
+  .card-subtle-elevated {
+    @apply bg-zinc-800 border border-zinc-600/60 rounded-lg shadow-lg text-zinc-200 hover:bg-zinc-900 focus:ring-2 focus:ring-blue-500 transition-all duration-300;
+  }
+
+  .card-subtle-muted {
+    @apply bg-zinc-800/60 border border-zinc-700/40 rounded-lg text-zinc-300 hover:bg-zinc-900 focus:ring-2 focus:ring-blue-500 transition-all duration-300;
   }
 }
 

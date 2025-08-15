@@ -5,7 +5,7 @@ import ThemeToggle from "../ui/theme-toggle";
 
 export default function BookmarkNavbar({ user, bookmarks, onLogout }) {
   return (
-    <nav className="bg-surface/80  mx-4 mt-4 mb-6 px-6 py-4 shadow-md border border-border/30 rounded-2xl">
+    <nav className="bg-surface/80  mx-4 mt-4 mb-6 px-6 py-4 shadow-md border border-border/30 rounded-2xl dark:border-b-2 dark:border-b-white dark:border-x-1 dark:border-x-white">
       {/* Large screens: Logo, centered welcome, right side actions */}
       <div className="hidden md:flex items-center justify-between relative">
         {/* Left: Logo */}

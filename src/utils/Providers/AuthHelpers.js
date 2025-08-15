@@ -33,10 +33,19 @@ export function useAuthListener() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const { data: subscription } = supabase.auth.onAuthStateChange(() => {
-      //listener that keeps on running throughout
-      queryClient.invalidateQueries(["user"]); // a callback fxn to run on authstatechanging
-    });
+    const { data: subscription } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        //listener that keeps on running throughout
+
+        // Instead of invalidating, directly update the user query data
+        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+          queryClient.setQueryData(["user"], session?.user || null);
+        } else if (event === "SIGNED_OUT") {
+          queryClient.setQueryData(["user"], null);
+        }
+        // Don't invalidate anything - just update the specific data
+      }
+    );
 
     return () => subscription?.subscription.unsubscribe();
   }, [queryClient]);

@@ -57,7 +57,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
   }
 
   return (
-    <div className="bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 border border-border/50">
+    <div className="bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300 p-6 border border-border/50 dark:border-y-white dark:border-y-3">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -65,10 +65,10 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
             <Brain className="text-ai-accent" size={24} />
           </div>
           <div>
-            <h3 className="text-heading-md text-foreground">
+            <h3 className="text-heading-md text-gray-900 dark:text-white">
               My Learning Gaps
             </h3>
-            <p className="text-body-sm text-foreground-secondary">
+            <p className="text-body-sm text-gray-600 dark:text-white">
               AI analysis of my bookmark patterns
             </p>
           </div>
@@ -77,7 +77,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
           <button
             onClick={() => refetch()}
             disabled={isRefetching}
-            className="p-2 text-foreground-secondary hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors disabled:opacity-50"
+            className="p-2 text-foreground hover:text-foreground hover:bg-surface-elevated rounded-lg transition-colors disabled:opacity-50"
             title="Refresh analysis"
           >
             <RefreshCw
@@ -87,7 +87,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
           </button>
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="px-3 py-1 text-body-sm bg-ai-accent/10 text-ai-accent rounded-lg hover:bg-ai-accent/20 transition-colors"
+            className="px-3 py-1 text-body-sm bg-ai-accent/10 text-gray-600 dark:text-white rounded-lg hover:bg-ai-accent/20 transition-colors"
           >
             {isExpanded ? "Collapse" : "View Details"}
           </button>
@@ -97,14 +97,14 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
       {isLoading ? (
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-ai-accent"></div>
-          <span className="ml-3 text-body text-foreground-secondary">
+          <span className="ml-3 text-body text-gray-600 dark:text-white">
             Analyzing what I should learn next...
           </span>
         </div>
       ) : (
         <div className="space-y-4">
           {/* Quick Overview */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 dark:mb-10">
             {/* My Strengths */}
             <div className="bg-success/10 border border-success/20 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
@@ -117,7 +117,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                 {analysis?.strengths?.slice(0, 3).map((strength, idx) => (
                   <span
                     key={idx}
-                    className="inline-block bg-success/20 text-success text-caption px-2 py-1 rounded mr-1 mb-1"
+                    className="inline-block bg-success/20 text-gray-600 dark:text-white text-caption px-2 py-1 rounded mr-1 mb-1"
                   >
                     {strength}
                   </span>
@@ -136,7 +136,9 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
               <div className="text-heading-xl text-warning">
                 {analysis?.gaps?.length || 0}
               </div>
-              <div className="text-caption text-warning">areas to explore</div>
+              <div className="text-gray-600 dark:text-white text-caption">
+                areas to explore
+              </div>
             </div>
 
             {/* Analysis Info */}
@@ -145,10 +147,10 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                 <Brain className="text-primary" size={16} />
                 <span className="text-heading-sm text-primary">Based on</span>
               </div>
-              <div className="text-body-sm text-primary">
+              <div className="text-body-sm text-gray-600 dark:text-white">
                 {analysis?.metadata?.totalBookmarks || 0} bookmarks I have saved
               </div>
-              <div className="text-caption text-primary">
+              <div className="text-gray-600 dark:text-white text-caption">
                 {analysis?.metadata?.analyzedAt &&
                   new Date(analysis.metadata.analyzedAt).toLocaleDateString()}
               </div>
@@ -157,11 +159,11 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
 
           {/* Detailed View */}
           {isExpanded && (
-            <div className="space-y-6 border-t pt-6">
+            <div className="space-y-6 border-t dark:border-t-white dark:border-t-1  pt-6">
               {/* What I Should Learn */}
               {analysis?.gaps && analysis.gaps.length > 0 && (
                 <div>
-                  <h4 className="text-heading-md text-foreground mb-3 flex items-center gap-2">
+                  <h4 className="text-heading-md text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                     <AlertCircle size={16} className="text-warning" />
                     What I Should Learn Next
                   </h4>
@@ -186,7 +188,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                                 {gap.priority}
                               </span>
                             </div>
-                            <p className="text-body-sm text-foreground-secondary">
+                            <p className="text-body-sm text-gray-600 dark:text-white">
                               {gap.reason}
                             </p>
                           </div>
@@ -201,7 +203,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
               {analysis?.recommendations &&
                 analysis.recommendations.length > 0 && (
                   <div>
-                    <h4 className="text-heading-md text-foreground mb-3 flex items-center gap-2">
+                    <h4 className="text-heading-md text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                       <Lightbulb size={16} className="text-primary" />
                       What I Should Do Next
                     </h4>
@@ -216,7 +218,9 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                               {idx + 1}
                             </span>
                           </div>
-                          <p className="text-primary text-body-sm">{rec}</p>
+                          <p className="text-gray-600 dark:text-white text-body-sm">
+                            {rec}
+                          </p>
                         </div>
                       ))}
                     </div>
@@ -226,14 +230,14 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
               {/* What I'm Already Into */}
               {analysis?.metadata?.topTopics && (
                 <div>
-                  <h4 className="text-heading-md text-foreground mb-3">
+                  <h4 className="text-heading-md text-gray-900 dark:text-white mb-3">
                     What Im Already Into
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {analysis.metadata.topTopics.map((topic, idx) => (
                       <span
                         key={idx}
-                        className="bg-surface-elevated text-foreground px-3 py-1 rounded-full text-body-sm"
+                        className="bg-surface-elevated text-gray-600 dark:text-white px-3 py-1 rounded-full text-body-sm"
                       >
                         {topic.tag} ({topic.count})
                       </span>
@@ -246,7 +250,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
 
           {/* Empty State */}
           {analysis?.message && (
-            <div className="text-center py-6 text-foreground-secondary">
+            <div className="text-center py-6 text-gray-600 dark:text-white">
               <Brain size={32} className="mx-auto mb-2 text-foreground-muted" />
               <p className="text-body">{analysis.message}</p>
             </div>
