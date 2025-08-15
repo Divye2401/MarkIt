@@ -12,6 +12,8 @@
 
 ### 🤖 AI-Powered Magic Save
 
+![](src/assets/cards.png)
+
 - **Content Scraping**: Automatically extracts full content from any URL
 - **AI Enrichment**: Generates summaries, tags, reading time estimates, and content type classification using GPT-3.5
 - **Smart Tagging**: Auto-generates relevant topic tags for better organization
@@ -19,12 +21,16 @@
 
 ### 🔍 Semantic Search
 
+![](src/assets/semantic.png)
+
 - **Context-Aware Search**: Uses OpenAI embeddings for meaning-based search, not just keywords
 - **Natural Language Queries**: Find content with queries like "articles about React performance optimization"
 - **AI-Enhanced Results**: Provides intelligent search result summaries and suggested related content
 - **Google Integration**: Fetches fresh, relevant content suggestions from Google Custom Search
 
 ### 📊 Advanced Analytics & Visualizations
+
+![](src/assets/folder.png)
 
 - **Content Type Analysis**: Interactive charts showing distribution of articles, videos, PDFs, and other content types
 - **Bookmark Cluster Maps**: Heatmap visualization of content categories with interactive exploration
@@ -40,6 +46,8 @@
 - **Priority System**: Visual priority indicators for different types of content
 
 ### 🎨 Modern UI/UX
+
+![](src/assets/bookmark.png)
 
 - **Responsive Design**: Seamless experience across desktop, tablet, and mobile devices
 - **Dark/Light Themes**: Elegant theme system with smooth transitions
