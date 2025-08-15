@@ -21,8 +21,6 @@
 
 ### 🔍 Semantic Search
 
-![](src/assets/semantic.png)
-
 - **Context-Aware Search**: Uses OpenAI embeddings for meaning-based search, not just keywords
 - **Natural Language Queries**: Find content with queries like "articles about React performance optimization"
 - **AI-Enhanced Results**: Provides intelligent search result summaries and suggested related content
@@ -54,6 +52,16 @@
 - **Glass Morphism**: Modern design with backdrop blur effects and smooth animations
 - **Interactive Cards**: Hover effects, micro-animations, and intuitive navigation
 - **Real-Time Updates**: Live data synchronization using React Query
+
+### 🔬 Research Hub
+
+![](src/assets/research.png)
+
+- **AI-Powered Analysis**: Comprehensive research insights including methodology suggestions, strategic planning, and knowledge gap identification
+- **Academic Project Management**: Organize bookmarks by thesis statement, due dates, and research objectives with intelligent timeline tracking
+- **Research Methodology Guidance**: Personalized recommendations for research approaches, search strategies, and scholarly best practices
+- **Knowledge Gap Detection**: Identify missing areas in your research and receive targeted suggestions for comprehensive coverage
+- 
 
 ### 🔌 Browser Extension
 
