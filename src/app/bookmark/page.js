@@ -99,7 +99,7 @@ export default function BookmarkPage() {
     }
   }, [user]);
 
-  // --- Data Fetching ---
+  // --- Data Fetching ---JG
   const {
     data: bookmarks = [],
     isLoading: bookmarksLoading,
