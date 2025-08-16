@@ -162,7 +162,7 @@ export default function BookmarkClusterMap({ bookmarks }) {
         </div>
 
         {/* Row 2, Col 1-2: New Statistics Div */}
-        <div className="lg:col-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-border/50 dark:border-t-1 dark:border-t-white">
+        <div className="lg:col-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-border/50 dark:border-y-2 dark:border-y-white">
           <h3 className="text-heading-md text-foreground mb-4">
             Bookmark Statistics
           </h3>
