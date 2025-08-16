@@ -17,16 +17,16 @@ export default function BookmarkWelcome({ user, bookmarks }) {
   }
 
   return (
-    <div className="flex flex-col items-center mt-140">
-      <h1 className="text-3xl font-bold text-gray-900 mb-4">
+    <div className="flex flex-col items-center ">
+      <h1 className="text-3xl font-bold text-gray-900 mb-4 dark:text-white">
         Welcome, {firstName}!
       </h1>
 
-      <p className="text-gray-600 mb-6">
+      <p className="text-gray-600 mb-6 dark:text-white">
         Your bookmarks will appear here. Start by adding your first bookmark!
       </p>
       <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-        <p className="text-gray-500 text-lg">
+        <p className="text-gray-500 text-lg dark:text-white">
           Bookmark dashboard coming soon...
         </p>
       </div>

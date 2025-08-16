@@ -64,7 +64,7 @@ export default function Sidebar({
       >
         {hovered ? (
           <h2 className="text-heading-sm text-foreground font-bold">
-            📁 Folders
+            📁 Filter By Folders
           </h2>
         ) : (
           <span className="text-heading-sm text-foreground">📁</span>
@@ -159,17 +159,9 @@ export default function Sidebar({
           {hovered ? (
             <div className="flex items-center justify-between">
               <h3 className="text-heading-sm text-foreground font-bold">
-                🔬 Research
+                Research Projects
               </h3>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => router.push("/research")}
-                aria-label="Go to Research Hub"
-                className="bg-purple-500/20 text-purple-400 hover:bg-purple-500 hover:text-white rounded-xl transition-all duration-300 hover:scale-110"
-              >
-                <ArrowRight className="w-4 h-4" />
-              </Button>
+
               <Button
                 size="icon"
                 variant="ghost"

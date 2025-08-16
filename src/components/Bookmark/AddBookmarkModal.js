@@ -29,7 +29,7 @@ export default function AddBookmarkModal({ open, onClose, onAdd }) {
             animate={{ y: -50, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="bg-surface-elevated p-6 rounded-xl shadow-lg flex flex-col gap-4 min-w-[320px] mb-[50px] border border-border"
+            className="bg-surface-elevated p-6 rounded-xl shadow-lg flex flex-col gap-4 min-w-[320px] mb-[50px] border border-border ml-15"
           >
             <div className="flex gap-4 mb-2">
               <label className="flex items-center gap-1 text-body text-foreground">

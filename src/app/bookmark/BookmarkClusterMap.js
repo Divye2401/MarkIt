@@ -51,14 +51,17 @@ export default function BookmarkClusterMap({ bookmarks }) {
 
   if (isLoading)
     return (
-      <div className="text-center py-8 text-body text-foreground-secondary">
-        Loading clusters...
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p className="text-zinc-400">Loading clusters...</p>
+        </div>
       </div>
     );
   if (isError || !data)
     return (
       <div className="text-center py-8 text-body text-error">
-        Error loading clusters.
+        Error loading clusters. Try adding more bookmarks.
       </div>
     );
 

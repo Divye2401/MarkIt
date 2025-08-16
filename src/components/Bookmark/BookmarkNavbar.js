@@ -9,7 +9,7 @@ export default function BookmarkNavbar({ user, bookmarks, onLogout }) {
       {/* Large screens: Logo, centered welcome, right side actions */}
       <div className="hidden md:flex items-center justify-between relative">
         {/* Left: Logo */}
-        <div className="text-xl font-bold text-primary bg-primary/10 px-4 py-2 rounded-xl">
+        <div className="text-xl font-bold text-primary bg-primary/10 px-4 py-2 rounded-xl dark:text-white">
           📑 Markit
         </div>
 

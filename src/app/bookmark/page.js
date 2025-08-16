@@ -211,7 +211,9 @@ export default function BookmarkPage() {
     return <LoginPrompt />;
   }
 
-  // --- Main Render ---
+  console.log(bookmarks.length);
+  //
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900">
       {/* Main Layout Container */}
@@ -235,7 +237,22 @@ export default function BookmarkPage() {
               user={user}
               bookmarks={bookmarks}
               onLogout={onLogout}
+              bookmarksLength={bookmarks.length}
             />
+            {bookmarks.length === 0 && (
+              <div className="min-h-screen bg-background flex items-center justify-center">
+                <div className="text-center flex flex-col items-center gap-4">
+                  <p className="text-zinc-400 text-2xl font-bold dark:text-white">
+                    No bookmarks found. Add some to get started.
+                  </p>
+                  <AddBookmarkButton
+                    onClick={() => setShowInput(true)}
+                    width={48}
+                    height={48}
+                  />
+                </div>
+              </div>
+            )}
             {bookmarks.length > 0 && (
               <div className="w-full px-4 mt-4 mb-4">
                 <div className="flex flex-col md:flex-row items-end gap-4 w-full">
@@ -275,7 +292,11 @@ export default function BookmarkPage() {
                         "Search"
                       )}
                     </Button>
-                    <AddBookmarkButton onClick={() => setShowInput(true)} />
+                    <AddBookmarkButton
+                      onClick={() => setShowInput(true)}
+                      width={60}
+                      height={36}
+                    />
                     <Button
                       onClick={() => router.push("/research")}
                       className="px-4 py-3 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 text-white hover:from-purple-600 hover:to-indigo-700 transition-all font-medium text-sm"
