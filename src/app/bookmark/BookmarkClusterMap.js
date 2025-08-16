@@ -121,7 +121,7 @@ export default function BookmarkClusterMap({ bookmarks }) {
         </div>
 
         {/* Row 1-2, Col 3: Bookmark Categories (spans 2 rows) */}
-        <div className="lg:row-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-border/50 flex flex-col dark:border-r-2 dark:border-r-white">
+        <div className="lg:row-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-border/50 flex flex-col dark:border-x-2 dark:border-x-white lg:dark:border-r-2 lg:dark:border-r-white ">
           <h3 className="text-heading-md text-foreground mb-4 flex-shrink-0">
             Bookmark Categories
           </h3>
@@ -162,7 +162,7 @@ export default function BookmarkClusterMap({ bookmarks }) {
         </div>
 
         {/* Row 2, Col 1-2: New Statistics Div */}
-        <div className="lg:col-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-border/50">
+        <div className="lg:col-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-border/50 dark:border-t-1 dark:border-t-white">
           <h3 className="text-heading-md text-foreground mb-4">
             Bookmark Statistics
           </h3>
@@ -216,7 +216,7 @@ export default function BookmarkClusterMap({ bookmarks }) {
         </div>
 
         {/* Bottom row: Cluster Distribution Map */}
-        <div className="lg:col-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-6 border border-border/50 dark:border-2 dark:border-white">
+        <div className="lg:col-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-6 border border-border/50 dark:border-x-2 dark:border-x-white">
           <h3 className="text-heading-md text-foreground mb-4">
             Cluster Distribution
           </h3>
