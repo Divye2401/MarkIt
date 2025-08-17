@@ -330,7 +330,7 @@ export default function BookmarkPage() {
                 </div>
               </div>
             ) : (
-              <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start px-4">
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start px-4 mb-12">
                 {sortedBookmarks.map((b) => (
                   <BookmarkCard
                     key={b.id}
@@ -343,13 +343,14 @@ export default function BookmarkPage() {
                 ))}
               </div>
             )}
+
             {/* Bookmark Clusters Visualization */}
-            <div className="px-4 mt-6">
+            <div className="px-4 mb-12">
               <BookmarkClusterMap bookmarks={sortedBookmarks} />
             </div>
 
             {/* Knowledge Gap Analysis */}
-            <div className="mt-6 px-4">
+            <div className="px-4 mb-8">
               <KnowledgeGapAnalysis bookmarks={sortedBookmarks} />
             </div>
           </div>

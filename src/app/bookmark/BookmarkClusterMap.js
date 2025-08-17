@@ -66,16 +66,16 @@ export default function BookmarkClusterMap({ bookmarks }) {
     );
 
   return (
-    <div className="mt-6 space-y-6">
-      {/* Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-        {/* Row 1, Col 1-2: Content Type vs Duration Chart */}
-        <div className="lg:col-span-3 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-border/50 dark:border-b-1 dark:border-b-white">
-          <h3 className="text-heading-md text-foreground mb-4">
-            Content Type vs Average Duration
+    <div className="mt-4 space-y-3">
+      {/* Grid Layout - 2 rows x 2 columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        {/* Row 1, Col 1: Content Type vs Duration Chart */}
+        <div className="bg-surface rounded-xl p-3 border border-border/50 dark:border-b-5 dark:border-b-gray-200">
+          <h3 className="text-lg font-semibold text-foreground mb-3">
+            Content Type vs Duration
           </h3>
           {contentTypeStats.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {contentTypeStats.map((item, idx) => {
                 const maxDuration = Math.max(
                   ...contentTypeStats.map((s) => parseFloat(s.avgDuration))
@@ -86,14 +86,14 @@ export default function BookmarkClusterMap({ bookmarks }) {
                     : 0;
 
                 return (
-                  <div key={item.type} className="flex items-center gap-4">
-                    <div className="w-20 text-sm font-medium text-foreground text-right">
+                  <div key={item.type} className="flex items-center gap-3">
+                    <div className="w-16 text-xs font-medium text-foreground text-right">
                       {item.type}
                     </div>
                     <div className="flex-1 relative">
-                      <div className="w-full bg-surface-elevated rounded-full h-6 border border-border/30">
+                      <div className="w-full bg-surface-elevated rounded-full h-4 border border-border/20">
                         <div
-                          className="h-full rounded-full transition-all duration-500 flex items-center justify-end pr-2"
+                          className="h-full rounded-full transition-all duration-500 flex items-center justify-end pr-1"
                           style={{
                             width: `${Math.max(widthPercentage, 8)}%`,
                             background:
@@ -106,7 +106,7 @@ export default function BookmarkClusterMap({ bookmarks }) {
                         </div>
                       </div>
                     </div>
-                    <div className="w-12 text-xs text-foreground-secondary text-center">
+                    <div className="w-8 text-xs text-foreground-secondary text-center">
                       {item.count}
                     </div>
                   </div>
@@ -114,85 +114,40 @@ export default function BookmarkClusterMap({ bookmarks }) {
               })}
             </div>
           ) : (
-            <div className="text-center py-8 text-foreground-secondary">
+            <div className="text-center py-4 text-sm text-foreground-secondary">
               No content type data available
             </div>
           )}
         </div>
 
-        {/* Row 1-2, Col 3: Bookmark Categories (spans 2 rows) */}
-        <div className="lg:row-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-border/50 flex flex-col dark:border-x-2 dark:border-x-white lg:dark:border-r-2 lg:dark:border-r-white ">
-          <h3 className="text-heading-md text-foreground mb-4 flex-shrink-0">
-            Bookmark Categories
+        {/* Row 1, Col 2: Bookmark Statistics */}
+        <div className="bg-surface rounded-xl p-2 border border-border/50 dark:border-b-5 dark:border-b-gray-200">
+          <h3 className="text-sm font-semibold text-foreground mb-2">
+            Statistics
           </h3>
-          <div className="flex-1 bg-surface-elevated rounded-lg border border-border flex flex-col min-h-0">
-            {/* Header */}
-            <div className="px-4 py-2 bg-surface border-b border-border flex items-center">
-              <div className="flex-1 text-heading-sm text-foreground">
-                Category
-              </div>
-              <div className=" text-right text-heading-sm text-foreground ">
-                Bookmarks
-              </div>
-            </div>
-            {/* Scrollable rows */}
-            <div className="h-full overflow-y-auto divide-y divide-border flex flex-col">
-              {data.clusters.map((cluster, idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center px-4 hover:bg-surface-elevated bg-surface transition flex-1 min-h-[44px] cursor-pointer"
-                  onClick={() => {
-                    const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(
-                      cluster.label
-                    )}`;
-                    window.open(googleUrl, "_blank", "noopener,noreferrer");
-                  }}
-                  title={`Search Google for "${cluster.label}"`}
-                >
-                  <div className="flex-1 text-body text-foreground">
-                    {cluster.label}
-                  </div>
-                  <div className="w-20 text-right text-body-sm text-foreground-secondary">
-                    {cluster.bookmarks.length}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Row 2, Col 1-2: New Statistics Div */}
-        <div className="lg:col-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-border/50 dark:border-y-2 dark:border-y-white">
-          <h3 className="text-heading-md text-foreground mb-4">
-            Bookmark Statistics
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-2">
             <div className="text-center">
-              <div className="text-2xl font-bold text-primary">
+              <div className="text-lg font-bold text-white">
                 {bookmarks.length}
               </div>
-              <div className="text-sm text-foreground-secondary">
-                Total Bookmarks
-              </div>
+              <div className="text-xs text-foreground-secondary">Bookmarks</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-500">
+              <div className="text-lg font-bold text-white">
                 {data?.clusters?.length || 0}
               </div>
-              <div className="text-sm text-foreground-secondary">
+              <div className="text-xs text-foreground-secondary">
                 Categories
               </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-500">
+              <div className="text-lg font-bold text-white">
                 {contentTypeStats.reduce((acc, stat) => acc + stat.count, 0)}
               </div>
-              <div className="text-sm text-foreground-secondary">
-                Items Analyzed
-              </div>
+              <div className="text-xs text-foreground-secondary">Analyzed</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-500">
+              <div className="text-lg font-bold text-white">
                 {contentTypeStats.length > 0
                   ? (
                       contentTypeStats.reduce(
@@ -208,138 +163,109 @@ export default function BookmarkClusterMap({ bookmarks }) {
                   : "0"}
                 min
               </div>
-              <div className="text-sm text-foreground-secondary">
+              <div className="text-xs text-foreground-secondary">
                 Avg. Duration
               </div>
             </div>
           </div>
         </div>
 
-        {/* Bottom row: Cluster Distribution Map */}
-        <div className="lg:col-span-2 bg-surface rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-200 p-6 border border-border/50 dark:border-x-2 dark:border-x-white">
-          <h3 className="text-heading-md text-foreground mb-4">
-            Cluster Distribution
+        {/* Row 2: Combined Categories Bar Chart - spans both columns */}
+        <div className="lg:col-span-2 bg-surface rounded-xl p-4 flex flex-col border border-border/50 dark:border-b-5 dark:border-b-gray-200">
+          <h3 className="text-lg font-semibold text-foreground mb-4 flex-shrink-0">
+            Cluster Map
           </h3>
-          <div
-            className={`w-full h-[400px] rounded-lg overflow-hidden relative border-2 border-border shadow-sm ${
-              theme === "light"
-                ? "bg-gradient-to-br from-slate-50 to-blue-50"
-                : "bg-gradient-to-br from-slate-900 to-blue-900"
-            }`}
-          >
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 600 400"
-              preserveAspectRatio="xMidYMid meet"
-            >
-              {/* Background grid for reference */}
-              <defs>
-                <pattern
-                  id="grid"
-                  width="30"
-                  height="30"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <path
-                    d="M 30 0 L 0 0 0 30"
-                    fill="none"
-                    stroke={theme === "light" ? "#e2e8f0" : "#334155"}
-                    strokeWidth="0.5"
-                    opacity="0.5"
-                  />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
+          <div className="overflow-hidden">
+            {data?.clusters && data.clusters.length > 0 ? (
+              <div className="flex flex-col gap-3">
+                {data.clusters.map((cluster, idx) => {
+                  const colors = [
+                    "#850c85",
+                    "#850c85",
+                    "#f59e0b",
+                    "#ef4444",
+                    "#8b5cf6",
+                    "#06b6d4",
+                    "#f97316",
+                    "#84cc16",
+                    "#ec4899",
+                    "#6366f1",
+                  ];
+                  const color = colors[idx % colors.length];
+                  const maxBookmarks = Math.max(
+                    ...data.clusters.map((c) => c.bookmarks.length)
+                  );
+                  const widthPercentage =
+                    (cluster.bookmarks.length / maxBookmarks) * 100;
 
-              {/* Render clusters as clean circles */}
-              {data?.clusters?.map((cluster, idx) => {
-                const colors = [
-                  "#3b82f6",
-                  "#10b981",
-                  "#f59e0b",
-                  "#ef4444",
-                  "#8b5cf6",
-                  "#06b6d4",
-                  "#f97316",
-                  "#84cc16",
-                  "#ec4899",
-                  "#6366f1",
-                ];
-                const color = colors[idx % colors.length];
+                  return (
+                    <div key={idx} className="flex items-center gap-4 group">
+                      {/* Category name */}
+                      <div className="w-32 text-sm font-medium text-foreground text-right flex-shrink-0">
+                        {cluster.label}
+                      </div>
 
-                // Calculate truly random position for each cluster
-                const maxBookmarks = Math.max(
-                  ...data.clusters.map((c) => c.bookmarks.length)
-                );
+                      {/* Bar container */}
+                      <div className="flex-1 relative">
+                        <div className="w-full bg-surface-elevated rounded-full h-5 border border-border/20 overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all duration-700 ease-out flex items-center justify-between px-3 group-hover:brightness-110"
+                            style={{
+                              width: `${Math.max(widthPercentage, 10)}%`,
+                              background:
+                                "linear-gradient(to right, var(--button-color), color-mix(in srgb, var(--button-color) 60%, transparent))",
+                            }}
+                          >
+                            <span className="text-xs font-semibold text-white">
+                              {cluster.bookmarks.length}
+                            </span>
+                            <div className="w-2 h-2 bg-white/30 rounded-full"></div>
+                          </div>
+                        </div>
+                      </div>
 
-                // Generate truly random positions (different each time)
-                const normalizedX = Math.random();
-                const normalizedY = Math.random();
-                const sizeVariation = Math.random() * 0.6; // 30% variation
+                      {/* Percentage */}
+                      <div className="w-12 text-xs text-foreground-secondary text-center flex-shrink-0">
+                        {(
+                          (cluster.bookmarks.length / bookmarks.length) *
+                          100
+                        ).toFixed(0)}
+                        %
+                      </div>
 
-                // Add some organic size variation while keeping proportional to bookmark count
-                const baseRadius =
-                  10 + (cluster.bookmarks.length / maxBookmarks) * 25; // Smaller base: 10-35px instead of 20-60px
-                const finalRadius = baseRadius + sizeVariation * 8; // Smaller variation: ±8px instead of ±15px
-
-                // Calculate position with much wider scatter and minimal padding
-                const padding = 25; // Much smaller padding for wider distribution
-                const x = padding + Math.abs(normalizedX) * (600 - 2 * padding);
-                const y = padding + Math.abs(normalizedY) * (400 - 2 * padding);
-
-                return (
-                  <g key={idx}>
-                    {/* Outer glow */}
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r={finalRadius + 5}
-                      fill={color}
-                      opacity="0.15"
-                      className="animate-pulse"
-                    />
-                    {/* Main circle */}
-                    <circle
-                      cx={x}
-                      cy={y}
-                      r={finalRadius}
-                      fill={color}
-                      opacity="0.8"
-                      stroke="white"
-                      strokeWidth="2"
-                      className="hover:opacity-100 transition-opacity cursor-pointer"
-                      onClick={() => {
-                        const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(
-                          cluster.label
-                        )}`;
-                        window.open(googleUrl, "_blank", "noopener,noreferrer");
-                      }}
-                    />
-                    {/* Center dot */}
-                    <circle cx={x} cy={y} r="2" fill="white" opacity="0.9" />
-                    {/* Label */}
-                    <text
-                      x={x}
-                      y={y + finalRadius + 15}
-                      textAnchor="middle"
-                      className="text-xs font-medium fill-current text-foreground"
-                      style={{ fontSize: "9px" }}
-                    >
-                      {cluster.label}
-                    </text>
-                    <text
-                      x={x}
-                      y={y + finalRadius + 28}
-                      textAnchor="middle"
-                      className="text-xs fill-current text-foreground-secondary"
-                      style={{ fontSize: "8px" }}
-                    >
-                      {cluster.bookmarks.length} items
-                    </text>
-                  </g>
-                );
-              })}
-            </svg>
+                      {/* YouTube button */}
+                      <button
+                        className="w-8 h-8 rounded-full bg-red-500 hover:bg-purple-600 transition-colors flex items-center justify-center text-white flex-shrink-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
+                            cluster.label
+                          )}`;
+                          window.open(
+                            youtubeUrl,
+                            "_blank",
+                            "noopener,noreferrer"
+                          );
+                        }}
+                        title={`Search YouTube for "${cluster.label}"`}
+                      >
+                        <svg
+                          className="w-4 h-4"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                        </svg>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="py-8 flex items-center justify-center text-foreground-secondary">
+                No categories available
+              </div>
+            )}
           </div>
         </div>
       </div>
