@@ -2,6 +2,17 @@ import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchBookmarkClusters } from "@/utils/Frontend/BookmarkHelpers";
 import { useTheme } from "@/utils/Providers/ThemeProvider";
+import {
+  Chart as ChartJS,
+  LinearScale,
+  PointElement,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Bubble } from "react-chartjs-2";
+
+// Register Chart.js components
+ChartJS.register(LinearScale, PointElement, Tooltip, Legend);
 
 export default function BookmarkClusterMap({ bookmarks }) {
   const { theme } = useTheme();
@@ -48,6 +59,125 @@ export default function BookmarkClusterMap({ bookmarks }) {
     enabled: bookmarks.length > 0,
     refetchOnWindowFocus: false,
   });
+
+  // Prepare bubble chart data
+  const bubbleChartData = useMemo(() => {
+    if (!data?.clusters || data.clusters.length === 0) return null;
+
+    const colors = [
+      "rgba(133, 12, 133, 0.8)", // Purple
+      "rgba(245, 158, 11, 0.8)", // Amber
+      "rgba(239, 68, 68, 0.8)", // Red
+      "rgba(139, 92, 246, 0.8)", // Violet
+      "rgba(6, 182, 212, 0.8)", // Cyan
+      "rgba(249, 115, 22, 0.8)", // Orange
+      "rgba(132, 204, 22, 0.8)", // Lime
+      "rgba(236, 72, 153, 0.8)", // Pink
+      "rgba(99, 102, 241, 0.8)", // Indigo
+      "rgba(34, 197, 94, 0.8)", // Green
+    ];
+
+    return {
+      datasets: [
+        {
+          label: "Bookmark Clusters",
+          data: data.clusters.map((cluster, idx) => ({
+            x: cluster.daysSinceLastBookmark || 0,
+            y: cluster.bookmarksPerWeek || 0,
+            r: Math.max(8, Math.min(30, cluster.count * 2)), // Bubble radius
+            label: cluster.label,
+            count: cluster.count,
+            color: colors[idx % colors.length],
+          })),
+          backgroundColor: data.clusters.map(
+            (_, idx) => colors[idx % colors.length]
+          ),
+          borderColor: data.clusters.map((_, idx) =>
+            colors[idx % colors.length].replace("0.8", "1")
+          ),
+          borderWidth: 2,
+        },
+      ],
+    };
+  }, [data]);
+
+  // Chart options
+  const chartOptions = useMemo(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+        tooltip: {
+          backgroundColor:
+            theme === "dark"
+              ? "rgba(0, 0, 0, 0.8)"
+              : "rgba(255, 255, 255, 0.9)",
+          titleColor: theme === "dark" ? "#fff" : "#000",
+          bodyColor: theme === "dark" ? "#fff" : "#000",
+          borderColor: theme === "dark" ? "#374151" : "#e5e7eb",
+          borderWidth: 1,
+          callbacks: {
+            title: (context) => context[0].raw.label,
+            label: (context) => [
+              `Bookmarks: ${context.raw.count}`,
+              `Days since last: ${context.raw.x.toFixed(1)}`,
+              `Per week: ${context.raw.y.toFixed(2)}`,
+            ],
+          },
+        },
+      },
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: "Days Since Last Bookmark",
+            color: theme === "dark" ? "#9ca3af" : "#6b7280",
+          },
+          grid: {
+            color:
+              theme === "dark"
+                ? "rgba(255, 255, 255, 0.1)"
+                : "rgba(0, 0, 0, 0.1)",
+          },
+          ticks: {
+            color: theme === "dark" ? "#9ca3af" : "#6b7280",
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: "Bookmarks Per Week",
+            color: theme === "dark" ? "#9ca3af" : "#6b7280",
+          },
+          grid: {
+            color:
+              theme === "dark"
+                ? "rgba(255, 255, 255, 0.1)"
+                : "rgba(0, 0, 0, 0.1)",
+          },
+          ticks: {
+            color: theme === "dark" ? "#9ca3af" : "#6b7280",
+          },
+        },
+      },
+      onClick: (event, elements) => {
+        if (elements.length > 0) {
+          const dataIndex = elements[0].index;
+          const cluster = data.clusters[dataIndex];
+          if (cluster) {
+            const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
+              cluster.label
+            )}`;
+            window.open(youtubeUrl, "_blank", "noopener,noreferrer");
+          }
+        }
+      },
+    }),
+    [theme, data]
+  );
 
   if (isLoading)
     return (
@@ -170,103 +300,66 @@ export default function BookmarkClusterMap({ bookmarks }) {
           </div>
         </div>
 
-        {/* Row 2: Combined Categories Bar Chart - spans both columns */}
+        {/* Row 2: Bubble Chart - spans both columns */}
         <div className="lg:col-span-2 bg-surface rounded-xl p-4 flex flex-col border border-border/50 dark:border-b-5 dark:border-b-gray-200">
-          <h3 className="text-lg font-semibold text-foreground mb-4 flex-shrink-0">
-            Cluster Map
-          </h3>
-          <div className="overflow-hidden">
-            {data?.clusters && data.clusters.length > 0 ? (
-              <div className="flex flex-col gap-3">
-                {data.clusters.map((cluster, idx) => {
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-foreground flex-shrink-0">
+              Cluster Activity Map
+            </h3>
+            <div className="text-xs text-foreground-secondary">
+              Click bubbles to search YouTube
+            </div>
+          </div>
+
+          {bubbleChartData ? (
+            <div className="flex-1" style={{ minHeight: "300px" }}>
+              <Bubble data={bubbleChartData} options={chartOptions} />
+            </div>
+          ) : (
+            <div className="py-8 flex items-center justify-center text-foreground-secondary">
+              No cluster data available
+            </div>
+          )}
+
+          {/* Legend */}
+          {data?.clusters && data.clusters.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-border/20">
+              <div className="text-xs text-foreground-secondary mb-2">
+                Clusters:
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {data.clusters.slice(0, 8).map((cluster, idx) => {
                   const colors = [
-                    "#850c85",
-                    "#850c85",
-                    "#f59e0b",
-                    "#ef4444",
-                    "#8b5cf6",
-                    "#06b6d4",
-                    "#f97316",
-                    "#84cc16",
-                    "#ec4899",
-                    "#6366f1",
+                    "rgba(133, 12, 133, 0.8)",
+                    "rgba(245, 158, 11, 0.8)",
+                    "rgba(239, 68, 68, 0.8)",
+                    "rgba(139, 92, 246, 0.8)",
+                    "rgba(6, 182, 212, 0.8)",
+                    "rgba(249, 115, 22, 0.8)",
+                    "rgba(132, 204, 22, 0.8)",
+                    "rgba(236, 72, 153, 0.8)",
                   ];
-                  const color = colors[idx % colors.length];
-                  const maxBookmarks = Math.max(
-                    ...data.clusters.map((c) => c.bookmarks.length)
-                  );
-                  const widthPercentage =
-                    (cluster.bookmarks.length / maxBookmarks) * 100;
-
                   return (
-                    <div key={idx} className="flex items-center gap-4 group">
-                      {/* Category name */}
-                      <div className="w-32 text-sm font-medium text-foreground text-right flex-shrink-0">
-                        {cluster.label}
-                      </div>
-
-                      {/* Bar container */}
-                      <div className="flex-1 relative">
-                        <div className="w-full bg-surface-elevated rounded-full h-5 border border-border/20 overflow-hidden">
-                          <div
-                            className="h-full rounded-full transition-all duration-700 ease-out flex items-center justify-between px-3 group-hover:brightness-110"
-                            style={{
-                              width: `${Math.max(widthPercentage, 10)}%`,
-                              background:
-                                "linear-gradient(to right, var(--button-color), color-mix(in srgb, var(--button-color) 60%, transparent))",
-                            }}
-                          >
-                            <span className="text-xs font-semibold text-white">
-                              {cluster.bookmarks.length}
-                            </span>
-                            <div className="w-2 h-2 bg-white/30 rounded-full"></div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Percentage */}
-                      <div className="w-12 text-xs text-foreground-secondary text-center flex-shrink-0">
-                        {(
-                          (cluster.bookmarks.length / bookmarks.length) *
-                          100
-                        ).toFixed(0)}
-                        %
-                      </div>
-
-                      {/* YouTube button */}
-                      <button
-                        className="w-8 h-8 rounded-full bg-red-500 hover:bg-purple-600 transition-colors flex items-center justify-center text-white flex-shrink-0"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
-                            cluster.label
-                          )}`;
-                          window.open(
-                            youtubeUrl,
-                            "_blank",
-                            "noopener,noreferrer"
-                          );
-                        }}
-                        title={`Search YouTube for "${cluster.label}"`}
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                        </svg>
-                      </button>
+                    <div key={idx} className="flex items-center gap-1">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: colors[idx % colors.length] }}
+                      ></div>
+                      <span className="text-xs text-foreground-secondary">
+                        {cluster.label} (
+                        {cluster.count || cluster.bookmarks?.length || 0})
+                      </span>
                     </div>
                   );
                 })}
+                {data.clusters.length > 8 && (
+                  <span className="text-xs text-foreground-secondary">
+                    +{data.clusters.length - 8} more
+                  </span>
+                )}
               </div>
-            ) : (
-              <div className="py-8 flex items-center justify-center text-foreground-secondary">
-                No categories available
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

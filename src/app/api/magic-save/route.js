@@ -90,6 +90,7 @@ export async function POST(request) {
           reading_time: aiResult.readingTime,
           shared_with: [],
           embedding,
+          updated_at: new Date().toISOString(),
         },
       ])
       .select();
@@ -119,8 +120,6 @@ export async function PATCH(request) {
     // Use auth middleware
     const { user, supabase, errorResponse } = await requireAuth(request);
     if (errorResponse) return errorResponse;
-
-    // const supabase = supabase; // This line is removed
 
     const {
       id,
@@ -154,18 +153,21 @@ export async function PATCH(request) {
         thumbnail_url,
         notes,
         bigger_summary,
+        updated_at: new Date().toISOString(),
       })
       .eq("id", id)
       .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
       .select();
 
     if (error) {
+      console.error("Update error:", error);
       return NextResponse.json(
         { success: false, error: error.message },
         { status: 500 }
       );
     }
 
+    console.log("Updated bookmark:", updated);
     return NextResponse.json({ success: true, bookmark: updated?.[0] || null });
   } catch (error) {
     return NextResponse.json(

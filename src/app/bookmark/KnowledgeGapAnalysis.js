@@ -119,7 +119,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                   size={16}
                 />
                 <span
-                  className={`text-heading-sm ${
+                  className={`text-heading-md ${
                     theme === "dark" ? "text-success" : "text-success"
                   }`}
                 >
@@ -156,7 +156,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                   size={16}
                 />
                 <span
-                  className={`text-heading-sm ${
+                  className={`text-heading-md ${
                     theme === "dark" ? "text-warning" : "text-warning"
                   }`}
                 >
@@ -199,23 +199,24 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                     theme === "dark" ? "text-primary" : "text-primary"
                   }`}
                 >
-                  Based on
+                  Total Count
                 </span>
               </div>
-              <div
-                className={`text-md ${
-                  theme === "dark" ? "text-primary" : "text-gray-600"
-                }`}
-              >
-                {analysis?.metadata?.totalBookmarks || 0} bookmarks I have saved
-              </div>
-              <div
-                className={`text-body-md ${
-                  theme === "dark" ? "text-primary" : "text-gray-600"
-                }`}
-              >
-                {analysis?.metadata?.analyzedAt &&
-                  new Date(analysis.metadata.analyzedAt).toLocaleDateString()}
+              <div className="flex items-center gap-4">
+                <div
+                  className={`text-heading-xl ${
+                    theme === "dark" ? "text-primary" : "text-primary"
+                  }`}
+                >
+                  {analysis?.metadata?.totalBookmarks || 0}
+                </div>
+                <span
+                  className={`text-md ${
+                    theme === "dark" ? "text-primary" : "text-gray-600"
+                  }`}
+                >
+                  unique bookmarks
+                </span>
               </div>
             </div>
           </div>

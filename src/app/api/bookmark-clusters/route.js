@@ -21,7 +21,7 @@ export async function POST(request) {
     // Fetch all bookmarks for this user
     const { data: bookmarks, error } = await supabase
       .from("bookmarks")
-      .select("id, embedding, url, title, summary, tags")
+      .select("id, embedding, url, title, summary, tags, created_at")
       .or(`user_id.eq.${user.id},shared_with.cs.{${user.id}}`)
       .not("embedding", "is", null)
       .in("id", bookmarkIds); //only fetch bookmarks that are in the list
@@ -69,14 +69,16 @@ export async function POST(request) {
     // Group bookmarks by cluster
     const clusters = Array.from({ length: numClusters }, () => []);
     result.clusters.forEach((clusterIdx, i) => {
-      clusters[clusterIdx].push(bookmarks[i].url, bookmarks[i].title);
+      clusters[clusterIdx].push(bookmarks[i]);
     });
 
-    // Generate AI label for each cluster
+    // Generate AI label for each cluster and calculate bubble metrics
     const labeledClusters = [];
     for (const cluster of clusters) {
+      if (cluster.length === 0) continue; // Skip empty clusters
+
       const prompt = `Given these bookmark urls and titles:\n${cluster
-        .map((b, i) => `Value:${b}`)
+        .map((b) => `URL: ${b.url}, Title: ${b.title}`)
         .join(
           "\n"
         )}\nSummarize the main topic or theme of this group in 1-3 words. Only return the topic label, nothing else.`;
@@ -90,9 +92,35 @@ export async function POST(request) {
       } catch (e) {
         label = "Misc";
       }
+
+      // Calculate bubble chart metrics
+      const now = Date.now();
+      const createdDates = cluster.map((b) => new Date(b.created_at).getTime());
+
+      // X-axis: Days since last bookmark in this cluster
+      const lastBookmarkDate = Math.max(...createdDates);
+      const daysSinceLastBookmark = Math.max(
+        0,
+        (now - lastBookmarkDate) / (1000 * 60 * 60 * 24)
+      );
+
+      // Y-axis: Bookmarks per week (frequency)
+      const oldestBookmarkDate = Math.min(...createdDates);
+      const totalDays = Math.max(
+        1,
+        (now - oldestBookmarkDate) / (1000 * 60 * 60 * 24)
+      );
+      const bookmarksPerWeek = (cluster.length / totalDays) * 7;
+
+      // Bubble size: Total bookmark count
+      const count = cluster.length;
+
       labeledClusters.push({
         label,
-        bookmarks: cluster.filter((_, i) => i % 2 !== 0),
+        count,
+        daysSinceLastBookmark: Math.round(daysSinceLastBookmark * 10) / 10, // Round to 1 decimal
+        bookmarksPerWeek: Math.round(bookmarksPerWeek * 100) / 100, // Round to 2 decimals
+        bookmarks: cluster.map((b) => ({ url: b.url, title: b.title })), // Keep original format for compatibility
       });
     }
 
