@@ -30,10 +30,10 @@ export async function POST(request) {
 
     if (bookmarks.length <= 3) {
       numClusters = bookmarks.length;
-    } else if (bookmarks.length > 3 && bookmarks.length <= 5) {
+    } else if (bookmarks.length > 3 && bookmarks.length <= 6) {
       numClusters = 3;
-    } else if (bookmarks.length > 5 && bookmarks.length <= 10) {
-      numClusters = 7;
+    } else if (bookmarks.length > 6 && bookmarks.length <= 10) {
+      numClusters = 5;
     } else if (bookmarks.length > 10 && bookmarks.length <= 15) {
       numClusters = 10;
     } else if (bookmarks.length > 15 && bookmarks.length <= 20) {
@@ -61,11 +61,12 @@ export async function POST(request) {
       return NextResponse.json({ clusters: cached.data });
     }
 
-    console.log("Not in cache");
     // Prepare data for clustering
     const vectors = bookmarks.map((b) => b.embedding);
+
     // Run K-means clustering
     const result = kmeans(vectors, numClusters);
+
     // Group bookmarks by cluster
     const clusters = Array.from({ length: numClusters }, () => []);
     result.clusters.forEach((clusterIdx, i) => {

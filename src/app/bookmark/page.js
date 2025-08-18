@@ -211,7 +211,6 @@ export default function BookmarkPage() {
     return <LoginPrompt />;
   }
 
-  console.log(bookmarks.length);
   //
 
   return (

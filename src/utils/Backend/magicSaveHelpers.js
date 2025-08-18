@@ -17,7 +17,7 @@ export async function fetchPageContent(url) {
 
       return html;
     } catch (err) {
-      console.log("Simple fetch failed, trying Puppeteer:", err.message);
+      console.log("Simple fetch failed, trying Puppeteer:");
       return await fetchWithPuppeteer(url);
     }
   }
@@ -66,9 +66,10 @@ async function fetchWithPuppeteer(url) {
     // Navigate to page with timeout
     await page.goto(url, {
       waitUntil: "networkidle2", // Wait until there are no more than 2 network connections for 500ms
-      timeout: 10000,
+      timeout: 30000,
     });
-    await page.waitForTimeout(2000); // Wait for 2 seconds more for any delayed content loading
+    // Wait a bit more for any delayed content loading
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const html = await page.content();
 
