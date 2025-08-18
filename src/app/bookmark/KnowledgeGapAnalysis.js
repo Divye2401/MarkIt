@@ -268,7 +268,9 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                                 <span
                                   className={`text-xs px-2 py-1 rounded uppercase font-semibold ${
                                     theme === "dark"
-                                      ? "bg-white/15 text-white"
+                                      ? `${getPriorityColor(
+                                          gap.priority
+                                        )} !text-white`
                                       : ""
                                   }`}
                                 >
