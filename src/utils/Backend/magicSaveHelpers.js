@@ -1,12 +1,84 @@
 import * as cheerio from "cheerio";
+import puppeteer from "puppeteer";
 
 export async function fetchPageContent(url) {
+  // Try simple fetch first, auto-detect if Puppeteer is needed
+  {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
+      const html = await res.text();
+
+      // Check if content seems to be dynamically rendered (heuristic check)
+      if (isDynamicContent(html)) {
+        console.log("Dynamic content detected, falling back to Puppeteer");
+        return await fetchWithPuppeteer(url);
+      }
+
+      return html;
+    } catch (err) {
+      console.log("Simple fetch failed, trying Puppeteer:", err.message);
+      return await fetchWithPuppeteer(url);
+    }
+  }
+}
+
+// Helper function to detect if content is likely dynamically rendered
+function isDynamicContent(html) {
+  const $ = cheerio.load(html);
+
+  // Check for common indicators of dynamic content
+  const bodyText = $("body").text().trim();
+  const hasReactRoot = $("#root").length > 0 || $("#__next").length > 0;
+  const hasVueApp = $("[data-v-]").length > 0;
+  const hasAngularApp = $("[ng-app]").length > 0 || $("app-root").length > 0;
+  const hasMinimalContent = bodyText.length < 200;
+  const hasLoadingIndicators =
+    $('[class*="loading"], [class*="spinner"], [id*="loading"]').length > 0;
+
+  // If body has very little text content but has SPA indicators, likely dynamic
+  return (
+    (hasMinimalContent && (hasReactRoot || hasVueApp || hasAngularApp)) ||
+    hasLoadingIndicators
+  );
+}
+
+// Puppeteer-based fetch function
+async function fetchWithPuppeteer(url) {
+  let browser;
   try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Failed to fetch: ${res.status}`);
-    return await res.text();
+    browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+      ],
+    });
+
+    const page = await browser.newPage();
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    );
+    await page.setViewport({ width: 1280, height: 720 });
+
+    // Navigate to page with timeout
+    await page.goto(url, {
+      waitUntil: "networkidle2", // Wait until there are no more than 2 network connections for 500ms
+      timeout: 10000,
+    });
+    await page.waitForTimeout(2000); // Wait for 2 seconds more for any delayed content loading
+
+    const html = await page.content();
+
+    return html;
   } catch (err) {
-    throw new Error("Failed to fetch URL content: " + err.message);
+    throw new Error(`Failed to fetch URL content : ${err.message}`);
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
   }
 }
 //-----------------------------------------------------------------------------------
