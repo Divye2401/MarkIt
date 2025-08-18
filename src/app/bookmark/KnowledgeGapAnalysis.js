@@ -269,7 +269,8 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                                   className={`text-xs px-2 py-1 rounded uppercase font-semibold ${
                                     theme === "dark"
                                       ? `${getPriorityColor(
-                                          gap.priority
+                                          gap.priority,
+                                          (darkMode = true)
                                         )} !text-white`
                                       : ""
                                   }`}
