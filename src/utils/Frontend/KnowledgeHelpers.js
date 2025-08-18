@@ -30,15 +30,15 @@ export function getPriorityColor(priority, darkMode = false) {
   switch (priority) {
     case "high":
       return darkMode
-        ? " bg-red-400/50 border-error/60"
+        ? " bg-red-600/70 border-error/60"
         : "text-error bg-red-400/10 border-error/60";
     case "medium":
       return darkMode
-        ? " bg-warning/50 border-warning/60"
+        ? " bg-warning/70 border-warning/60"
         : "text-warning bg-warning/10 border-warning/60";
     case "low":
       return darkMode
-        ? " bg-success/50 border-success/60"
+        ? " bg-success/70 border-success/60"
         : "text-success bg-success/10 border-success/60";
     default:
       return darkMode

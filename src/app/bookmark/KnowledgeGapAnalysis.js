@@ -270,7 +270,7 @@ export default function KnowledgeGapAnalysis({ bookmarks }) {
                                     theme === "dark"
                                       ? `${getPriorityColor(
                                           gap.priority,
-                                          (darkMode = true)
+                                          true
                                         )} !text-white`
                                       : ""
                                   }`}
